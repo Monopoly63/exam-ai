@@ -9,6 +9,12 @@ import textwrap
 
 ROOT = Path(__file__).resolve().parent
 
+# Deployed on Vercel from a small static bundle; original lecture files stay on GitHub.
+GITHUB_SOURCE_BASE = (
+    "https://github.com/Monopoly63/exam-ai/raw/refs/heads/"
+    "arena/872c0405-exam-ai/study/sources/"
+)
+
 # ---------------------------------------------------------------------------
 # Code snippets. They are intentionally short: the exam-relevant lines only.
 # ---------------------------------------------------------------------------
@@ -853,8 +859,8 @@ CARD_TEMPLATE = """
 def code_card(cid, tag, title, sub, code_key, note, source=None):
     src = ""
     if source:
-        src = ('<a class="source-link" href="sources/' + escape(source) +
-               '" download>الأصل .py</a>')
+        src = ('<a class="source-link" href="' + GITHUB_SOURCE_BASE + escape(source) +
+               '" target="_blank" rel="noopener">الأصل .py</a>')
     notes = ""
     if note:
         notes = '<div class="notes"><span class="notes-label">احفظ</span><div>' + note + '</div></div>'
@@ -1080,7 +1086,7 @@ checklist_body = """
 
 sources_body = """
 <div class="callout">
-  <b>المصدر:</b> أكواد ZIP الأصلية اللي بالريبو. نسخها الكاملة صارت تحت <code>study/sources/</code> حتى تقدر تفتحها أو تنزّلها من غير فك ضغط.
+  <b>المصدر:</b> أكواد ZIP الأصلية اللي بالريبو. نسخها الكاملة موجودة تحت <code>study/sources/</code> بالفرع الحالي على GitHub، وكل رابط بالجدول بيفتح الملف الأصلي مباشرة.
 </div>
 <div class="table-wrap">
   <table class="compare sources">
@@ -1095,7 +1101,8 @@ sources_body = """
 
 rows = "\n".join(
     "<tr><td><code>" + escape(z) + "</code></td><td dir='ltr'><code>" + escape(orig) +
-    "</code></td><td><a href='sources/" + escape(copy) + "' download>" + escape(copy) +
+    "</code></td><td><a href='" + GITHUB_SOURCE_BASE + escape(copy) +
+    "' target='_blank' rel='noopener'>" + escape(copy) +
     "</a></td><td>" + escape(topic) + "</td></tr>"
     for z, orig, copy, topic in SOURCES
 )
