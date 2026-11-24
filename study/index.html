@@ -1,1462 +1,682 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<title>مذاكرة عملي AI — Optimization · Regularization · SVM</title>
+<title>مذاكرة عملي AI — أسئلة اشرح · Optimization · Regularization · SVM</title>
+<meta name="description" content="مذاكرة عملي الذكاء الاصطناعي: أسئلة اشرح بالإجابات النموذجية لموضوعات Optimization و Regularization و SVM/SVR/SVC — بدون كتابة كود.">
 <style>
 :root{
-  --bg:#0b1020; --bg2:#111832; --card:#151d38; --card2:#1b2547;
-  --ink:#eef3ff; --muted:#a8b4d4; --line:rgba(170,190,255,.16);
-  --teal:#4ee0c1; --blue:#7aa8ff; --yellow:#ffd166; --pink:#ff8fab; --red:#ff6b6b;
-  --shadow:0 18px 45px rgba(0,0,0,.28); --radius:20px;
+  --bg:#0e1428; --card:#161f3a; --card2:#1d2745; --line:rgba(160,185,255,.16);
+  --ink:#e9edfa; --muted:#a7b4d6; --teal:#46e0b8; --blue:#8ab4ff; --yellow:#ffd166;
+  --red:#ff7d7d; --radius:16px; --shadow:0 14px 38px rgba(0,0,0,.30);
+}
+body[data-theme="light"]{
+  --bg:#f6f8ff; --card:#ffffff; --card2:#eef1fb; --line:rgba(28,45,95,.14);
+  --ink:#1a2340; --muted:#566184; --teal:#0e9f74; --blue:#2f62d6; --yellow:#b07a00; --red:#c23b3b;
+  --shadow:0 10px 28px rgba(28,45,95,.10);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:92px}
-body{margin:0;background:radial-gradient(1200px 700px at 85% -10%,#1d2b5c 0%,transparent 60%),radial-gradient(900px 600px at 5% 20%,#153c47 0%,transparent 55%),var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.75;direction:rtl}
-body[data-theme="light"]{--bg:#f5f7ff;--bg2:#ffffff;--card:#ffffff;--card2:#f0f4ff;--ink:#17213d;--muted:#5b6786;--line:rgba(30,50,100,.14);--shadow:0 12px 30px rgba(30,50,100,.10);background:radial-gradient(900px 500px at 90% -10%,#dce8ff 0%,transparent 60%),var(--bg)}
-a{color:inherit;text-decoration:none}
-code{font-family:"Cascadia Code",Consolas,Monaco,"Courier New",monospace;font-size:.92em}
-.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px);background:rgba(11,16,32,.86);border-bottom:1px solid var(--line)}
-body[data-theme="light"] .topbar{background:rgba(245,247,255,.88)}
-.topbar-inner{max-width:1240px;margin:auto;display:flex;align-items:center;gap:14px;padding:10px 20px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;white-space:nowrap}
-.brand-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--teal),var(--blue));display:grid;place-items:center;color:#08101f;font-weight:900}
-.brand small{display:block;color:var(--muted);font-weight:500;font-size:11px;line-height:1.2}
-nav.tabs{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
-nav.tabs::-webkit-scrollbar{display:none}
-nav.tabs a{white-space:nowrap;padding:7px 11px;border-radius:999px;color:var(--muted);font-size:13px;font-weight:650;border:1px solid transparent;transition:.2s}
-nav.tabs a:hover,nav.tabs a.active{color:var(--ink);background:var(--card2);border-color:var(--line)}
-.tools{display:flex;gap:7px;align-items:center}
-.search{width:150px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 13px;font:inherit;font-size:13px;outline:none}
-.search:focus{border-color:var(--teal);width:190px}
-.icon-btn{border:1px solid var(--line);background:var(--card);color:var(--ink);width:36px;height:36px;border-radius:11px;cursor:pointer;font-size:16px;display:grid;place-items:center}
-.icon-btn:hover{border-color:var(--teal)}
-.wrap{max-width:1240px;margin:auto;padding:30px 20px 80px}
-section.topic{scroll-margin-top:90px;margin-bottom:62px}
-.section-head{display:flex;align-items:center;gap:16px;margin:0 0 22px}
-.section-num{width:48px;height:48px;flex:none;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(78,224,193,.18),rgba(122,168,255,.18));border:1px solid var(--line);color:var(--teal);font-weight:900;font-size:20px}
-.kicker{margin:0;color:var(--teal);font-size:12px;font-weight:800;letter-spacing:.4px}
-h1,h2,h3{line-height:1.35;margin:0}
-h2{font-size:clamp(24px,3vw,34px)}
-h3{font-size:18px}
-.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:28px;align-items:stretch}
-.hero-copy{padding:22px 6px}
-.pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.pill{padding:5px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12px;font-weight:750;background:var(--card)}
-h1{font-size:clamp(32px,5vw,56px);letter-spacing:-.5px}
-h1 span{background:linear-gradient(90deg,var(--teal),var(--blue),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
-.lead{color:var(--muted);font-size:16px;max-width:680px;margin:18px 0 24px}
-.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:.2s}
-.btn:hover{transform:translateY(-1px);border-color:var(--teal)}
-.btn.primary{background:linear-gradient(135deg,var(--teal),#59b8ff);color:#08101f;border:0}
-.btn.tiny{padding:6px 11px;font-size:12px;border-radius:9px}
-.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:30px}
-.mini-stats div{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:12px;text-align:center}
-.mini-stats strong{display:block;font-size:22px;color:var(--yellow)}
-.mini-stats span{font-size:11px;color:var(--muted)}
-.board{background:linear-gradient(160deg,#f4f7fb,#dfe7f0);border-radius:var(--radius);padding:18px;color:#14203b;box-shadow:var(--shadow);border:6px solid #cfd8e6;position:relative;overflow:hidden;transform:rotate(-.4deg)}
-.board:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 38px,rgba(30,60,100,.035) 39px 40px);pointer-events:none}
-.board-header{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:#51617f;border-bottom:2px solid #cbd5e3;padding-bottom:10px;margin-bottom:8px;position:relative}
-.board-dots{letter-spacing:5px;color:#ff7a7a}
-.steps{list-style:none;margin:0;padding:0;position:relative}
-.steps li{display:flex;gap:12px;align-items:flex-start;padding:9px 4px;border-bottom:1px dashed rgba(40,60,90,.16)}
-.steps li:last-child{border-bottom:0}
-.steps b{width:28px;height:28px;flex:none;border:2px solid #e06a6a;color:#d55d5d;border-radius:50%;display:grid;place-items:center;font-family:Georgia,serif}
-.steps strong{display:block;font-family:"Segoe Print","Comic Sans MS",Tahoma,sans-serif;font-size:15px;letter-spacing:.2px}
-.steps code{display:inline-block;direction:ltr;text-align:left;font-size:10.5px;color:#43577a;background:rgba(255,255,255,.65);padding:2px 6px;border-radius:6px;margin-top:2px}
-.summary-strip{margin-top:28px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-.summary-strip h3{margin-bottom:14px;color:var(--yellow)}
-.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.summary-grid div{display:flex;gap:10px;align-items:flex-start;background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:10px 12px}
-.summary-grid span{color:var(--teal);font-weight:900;font-size:12px;flex:none}
-.summary-grid p{margin:0;font-size:13px;color:var(--muted)}
-.summary-grid b,.summary-grid code{color:var(--ink)}
-.callout{background:linear-gradient(90deg,rgba(78,224,193,.10),rgba(122,168,255,.07));border:1px solid var(--line);border-right:4px solid var(--teal);border-radius:14px;padding:14px 17px;color:var(--muted);margin-bottom:18px}
-.callout b,.callout code{color:var(--ink)}
-.callout.accent{border-right-color:var(--blue)}
-.callout.warning{border-right-color:var(--yellow)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin:16px 0;box-shadow:var(--shadow);overflow:hidden}
-.card-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
-.card-title p{margin:5px 0 0;color:var(--muted);font-size:13px}
-.eyebrow{font-size:11px;font-weight:850;color:var(--teal);letter-spacing:.3px}
-.card-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.source-link{font-size:12px;color:var(--blue);border-bottom:1px dashed var(--blue);padding-bottom:1px;white-space:nowrap}
-.code-wrap{position:relative;background:#0a0f20;border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04);overflow:auto}
-body[data-theme="light"] .code-wrap{background:#101731}
-pre{margin:0;padding:18px 20px;direction:ltr;text-align:left;overflow:auto;max-height:560px;tab-size:4}
-pre code{color:#dbe6ff;font-size:13px;line-height:1.65;white-space:pre;display:block}
-.tok-k{color:#ff9ecd;font-weight:700}.tok-s{color:#a8e6a1}.tok-c{color:#7d8bab;font-style:italic}.tok-n{color:#ffd166}.tok-f{color:#7fd7ff}
-.notes{display:flex;gap:12px;padding:13px 18px 16px;color:var(--muted);font-size:13px;background:linear-gradient(90deg,rgba(255,209,102,.06),transparent)}
-.notes-label{flex:none;background:rgba(255,209,102,.14);color:var(--yellow);border-radius:8px;padding:2px 9px;font-weight:850;height:fit-content}
-.notes code{color:var(--teal)}
-.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--card);margin:16px 0}
-table{border-collapse:collapse;width:100%;min-width:700px;font-size:13px}
-th,td{padding:12px 14px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
-th{background:var(--card2);color:var(--teal);font-size:12px;letter-spacing:.2px}
-tr:last-child td{border-bottom:0}
-td code{color:var(--yellow)}
-.formula-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
-.formula-strip div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
-.formula-strip span{display:block;color:var(--muted);font-size:11px;font-weight:800;margin-bottom:6px}
-.formula-strip code{color:var(--teal);font-size:12px;display:block;text-align:left;direction:ltr}
-.reg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
-.reg-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
-.reg-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:rgba(78,224,193,.12);color:var(--teal);font-size:20px;margin-bottom:10px}
-.reg-card p{color:var(--muted);font-size:13px;margin:6px 0}
-.reg-card code{display:block;direction:ltr;text-align:left;color:var(--yellow);font-size:11px;margin-top:10px}
-.decision{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:16px}
-.decision h3{margin-bottom:14px}
-.decision-tree{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:stretch}
-.root{background:linear-gradient(135deg,var(--teal),var(--blue));color:#08101f;border-radius:14px;padding:14px;display:grid;place-items:center;font-weight:900;text-align:center}
-.branch{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--card2)}
-.branch span{display:block;color:var(--muted);font-size:12px}
-.branch b{display:block;color:var(--yellow);font-size:20px;margin:4px 0}
-.branch small{color:var(--teal);font-size:11px;direction:ltr;display:block;text-align:right}
-.cg-matrix{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin:16px 0}
-.cg-matrix h3{margin-bottom:12px}
-.matrix{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.matrix div{border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--card2)}
-.matrix span{display:block;color:var(--teal);font-size:11px;font-weight:800;margin-bottom:6px}
-.matrix p{margin:0;color:var(--muted);font-size:12px}
-.matrix .hot{border-color:rgba(255,107,107,.55);background:rgba(255,107,107,.08)}
-.matrix .hot span{color:var(--red)}
-.ready-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
-.ready-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
-.step-tag{font-size:11px;color:var(--pink);font-weight:850}
-.ready-card h3{margin:8px 0}
-.ready-card ul{padding-right:18px;color:var(--muted);font-size:13px;margin:10px 0 16px}
-.ready-card li{margin:4px 0}
-.ready-card code{color:var(--teal)}
-.quiz-top{display:flex;justify-content:space-between;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:14px}
-.quiz-top p{margin:4px 0 0;color:var(--muted);font-size:13px}
-.quiz-actions{display:flex;gap:8px}
-.quiz-result{margin-bottom:14px;font-weight:850;color:var(--yellow);min-height:20px}
-.quiz-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.quiz-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
-.q-num{color:var(--teal);font-size:11px;font-weight:900}
-.quiz-card h4{margin:6px 0 10px;font-size:15px;line-height:1.5}
-.opt{display:flex;gap:9px;align-items:flex-start;padding:7px 9px;border:1px solid transparent;border-radius:10px;cursor:pointer;font-size:13px;color:var(--muted)}
-.opt:hover{background:var(--card2)}
-.opt input{margin-top:5px;accent-color:var(--teal)}
-.opt.correct{background:rgba(78,224,193,.12);border-color:rgba(78,224,193,.45);color:var(--ink)}
-.opt.wrong{background:rgba(255,107,107,.10);border-color:rgba(255,107,107,.45);color:var(--ink)}
-.explain{display:none;margin-top:10px;padding:10px;border-radius:10px;background:var(--card2);color:var(--muted);font-size:12px;border-right:3px solid var(--yellow)}
-.explain.show{display:block}
-.check-head{display:flex;justify-content:space-between;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:14px}
-.check-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
-.progress-box{display:flex;align-items:center;gap:10px;min-width:190px}
-.progress-track{flex:1;height:9px;border-radius:99px;background:var(--card2);overflow:hidden;border:1px solid var(--line)}
-#progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--blue));transition:.3s}
-#progress-text{font-size:12px;color:var(--yellow);white-space:nowrap}
-.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
-.check-item{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;cursor:pointer;font-size:13px;color:var(--muted)}
-.check-item input{margin-top:5px;accent-color:var(--teal);width:16px;height:16px}
-.check-item:has(input:checked){border-color:rgba(78,224,193,.45);color:var(--ink);text-decoration:line-through;text-decoration-color:rgba(78,224,193,.5)}
-.footnote{color:var(--muted);font-size:12px;margin-top:14px}
-.footer{text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:20px;margin-top:50px}
-.search-hidden{display:none!important}
-body.exam-mode .notes,body.exam-mode .callout,body.exam-mode .summary-strip,body.exam-mode .reg-grid,body.exam-mode .cg-matrix,body.exam-mode .decision,body.exam-mode .formula-strip{display:none!important}
-body.exam-mode .card{border-color:rgba(78,224,193,.35)}
-body.exam-mode pre{max-height:360px}
-@media(max-width:900px){
-  .hero-grid,.ready-grid,.reg-grid,.decision-tree,.summary-grid,.formula-strip,.matrix,.quiz-list,.checklist{grid-template-columns:1fr}
-  .board{transform:none}
-  .topbar-inner{flex-wrap:wrap}
-  nav.tabs{order:3;width:100%;flex-basis:100%}
-  .search{width:120px}
-  .mini-stats{grid-template-columns:repeat(2,1fr)}
-  .check-head{flex-direction:column;align-items:stretch}
-  .quiz-top{flex-direction:column;align-items:stretch}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  margin:0; background:radial-gradient(1100px 640px at 88% -8%,#1c2955 0%,transparent 58%),radial-gradient(900px 600px at 4% 18%,#123043 0%,transparent 55%),var(--bg);
+  color:var(--ink); font-family:"Segoe UI",Tahoma,Arial,sans-serif;
+  font-size:18px; line-height:1.9;
 }
-@media(max-width:560px){.wrap{padding:20px 12px 60px}.topbar-inner{padding:8px 12px}.brand small{display:none}.tools{gap:5px}.search{width:95px}.search:focus{width:130px}.card-head{flex-direction:column}.card-actions{justify-content:flex-start}}
+body[data-theme="light"]{background:radial-gradient(900px 560px at 88% -8%,#dde8ff 0%,transparent 58%),var(--bg)}
+.container{width:min(100% - 2.4rem, 940px); margin-inline:auto}
+code{font-family:"Cascadia Code",Consolas,Monaco,"Courier New",monospace; font-size:.88em; background:var(--card2); border:1px solid var(--line); border-radius:6px; padding:1px 6px; direction:ltr; unicode-bidi:embed}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--teal); outline-offset:2px; border-radius:8px}
+
+/* ─── شريط التقدم العلوي ─── */
+#scroll-progress{position:fixed; top:0; right:0; height:3px; width:0%; background:linear-gradient(90deg,var(--teal),var(--blue)); z-index:100; transition:width .15s linear}
+
+/* ─── التوبار ─── */
+.topbar{position:sticky; top:0; z-index:50; backdrop-filter:blur(16px); background:rgba(14,20,40,.88); border-bottom:1px solid var(--line)}
+body[data-theme="light"] .topbar{background:rgba(246,248,255,.9)}
+.topbar-inner{display:flex; align-items:center; gap:.75rem; padding:.55rem 0}
+.brand{display:flex; align-items:center; gap:.6rem; font-weight:800; white-space:nowrap; font-size:.95rem}
+.brand-mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--teal),var(--blue));display:grid;place-items:center;color:#08111f;font-weight:900;font-size:.95rem}
+.brand small{display:block;color:var(--muted);font-weight:500;font-size:.68rem;line-height:1.25}
+.tabs{display:flex; gap:.3rem; overflow-x:auto; flex:1; scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{white-space:nowrap; padding:.4rem .75rem; border-radius:999px; color:var(--muted); font-size:.8rem; font-weight:700; border:1px solid transparent; transition:.2s}
+.tabs a:hover,.tabs a.active{color:var(--ink); background:var(--card2); border-color:var(--line)}
+.icon-btn{border:1px solid var(--line); background:var(--card); color:var(--ink); width:38px;height:38px;border-radius:11px;cursor:pointer;font-size:1.05rem;display:grid;place-items:center;flex:none}
+.icon-btn:hover{border-color:var(--teal)}
+
+/* ─── الأبطال / الهيرو ─── */
+.hero{padding:2.4rem 0 1.6rem; border-bottom:1px solid var(--line)}
+.eyebrow{color:var(--teal);font-weight:800;font-size:.78rem;letter-spacing:.6px;margin-bottom:.6rem}
+h1{font-size:clamp(1.75rem,4.6vw,2.7rem); line-height:1.4; letter-spacing:-.3px; margin:0 0 .8rem}
+h1 .hl{background:linear-gradient(90deg,var(--teal),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted); font-size:1.02rem; max-width:46ch; margin:0 0 1.2rem}
+.hero-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.btn{display:inline-flex;align-items:center;gap:.4rem;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:.62rem 1.05rem;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;transition:.2s}
+.btn:hover{transform:translateY(-1px);border-color:var(--teal)}
+.btn.primary{background:linear-gradient(135deg,var(--teal),#5db4ff);color:#08111f;border:0}
+.stat-row{display:flex;gap:.5rem;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.35rem .8rem;font-size:.8rem;color:var(--muted)}
+.stat b{color:var(--yellow);font-size:1rem;margin-left:.3rem}
+
+/* ─── الأقسام ─── */
+section.topic{padding:2.2rem 0 .4rem; scroll-margin-top:96px}
+.section-head{display:flex;align-items:center;gap:.9rem;margin-bottom:.4rem}
+.section-num{width:44px;height:44px;flex:none;border-radius:13px;display:grid;place-items:center;background:var(--card2);border:1px solid var(--line);color:var(--teal);font-weight:900;font-size:1.05rem}
+h2{font-size:clamp(1.35rem,3vw,1.8rem);line-height:1.45;margin:0}
+.kicker{margin:0;color:var(--teal);font-size:.72rem;font-weight:800;letter-spacing:.5px}
+.topic-intro{color:var(--muted);margin:.55rem 0 1rem;max-width:62ch}
+
+/* ─── خانة «الجواب بثلاث أسطر» ─── */
+.golden{background:linear-gradient(135deg,rgba(70,224,184,.12),rgba(138,180,255,.08));border:1px solid var(--line);border-right:4px solid var(--teal);border-radius:14px;padding:.8rem 1rem;font-size:.9rem;color:var(--muted);margin:.6rem 0 1.1rem}
+.golden b{color:var(--ink)}
+
+/* ─── بطاقة سؤال/جواب (أكورديون) ─── */
+.qa{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin:.6rem 0;overflow:hidden}
+.qa summary{display:flex;align-items:flex-start;gap:.7rem;cursor:pointer;list-style:none;padding:.85rem 1rem;font-weight:750;font-size:1rem;line-height:1.65;transition:background .2s}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary:hover{background:var(--card2)}
+.qa-q{flex:none;width:30px;height:30px;border-radius:9px;background:rgba(70,224,184,.14);color:var(--teal);display:grid;place-items:center;font-size:.85rem;font-weight:900;margin-top:.1rem}
+.chev{flex:none;margin-inline-start:auto;align-self:center;color:var(--muted);transition:transform .25s;font-size:.9rem}
+.qa[open] .chev{transform:rotate(90deg)}
+.qa-body{border-top:1px solid var(--line);padding:.85rem 1.1rem 1rem;background:linear-gradient(0deg,rgba(255,255,255,.015),transparent)}
+.model-answer{background:var(--card2);border-radius:12px;padding:.7rem .9rem;font-size:.95rem;border-right:3px solid var(--teal)}
+.model-answer b{color:var(--teal)}
+.trap{margin-top:.55rem;font-size:.85rem;color:var(--yellow);background:rgba(255,209,102,.08);border:1px dashed rgba(255,209,102,.4);border-radius:10px;padding:.4rem .7rem}
+.trap b{color:var(--yellow)}
+.copy-line{margin-top:.6rem;display:flex;justify-content:flex-end;gap:.4rem}
+.copy-btn{border:1px solid var(--line);background:transparent;color:var(--blue);border-radius:9px;padding:.3rem .75rem;font-size:.78rem;cursor:pointer;font-weight:700}
+.copy-btn:hover{border-color:var(--blue)}
+
+/* ─── بطاقات كود للشرح (اشرح هالكود) ─── */
+.code-qa{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin:.7rem 0;overflow:hidden}
+.code-qa pre{margin:0;direction:ltr;text-align:left;overflow-x:auto;background:#0a1020;padding:.9rem 1.1rem;border-bottom:1px solid var(--line)}
+body[data-theme="light"] .code-qa pre{background:#141c38}
+.code-qa code{background:transparent;border:0;color:#dbe6ff;padding:0;font-size:.82rem;line-height:1.7}
+.code-qa .explain{padding:.7rem 1rem .85rem;font-size:.92rem;color:var(--muted)}
+.code-qa .explain b{color:var(--ink)}
+.tag{display:inline-block;background:var(--card2);border:1px solid var(--line);border-radius:999px;font-size:.68rem;padding:.1rem .6rem;color:var(--blue);font-weight:800;margin-bottom:.45rem}
+
+/* ─── الجداول ─── */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin:.7rem 0;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.85rem}
+th,td{padding:.6rem .8rem;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--card2);color:var(--teal);font-size:.78rem}
+tr:last-child td{border-bottom:0}
+td code{white-space:nowrap}
+
+/* ─── شريط «كيف تجاوب» ─── */
+.formula{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:.7rem 0}
+.formula div{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:.7rem .8rem;font-size:.85rem}
+.formula span{display:block;color:var(--muted);font-size:.7rem;font-weight:800;margin-bottom:.3rem}
+.formula b{color:var(--teal)}
+
+/* ─── الكويز ─── */
+.quiz-top{display:flex;justify-content:space-between;align-items:center;gap:1rem;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.8rem 1.1rem;margin-bottom:.7rem;flex-wrap:wrap}
+.quiz-top p{margin:.2rem 0 0;color:var(--muted);font-size:.85rem}
+.quiz-actions{display:flex;gap:.5rem;flex:none}
+.quiz-result{min-height:1.4em;font-weight:800;color:var(--yellow);margin:.3rem 0 .7rem}
+.quiz-list{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+.quiz-card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:.8rem .9rem}
+.q-num{color:var(--teal);font-size:.68rem;font-weight:900}
+.quiz-card h4{margin:.3rem 0 .5rem;font-size:.9rem;line-height:1.65;font-weight:700}
+.opt{display:flex;gap:.5rem;align-items:flex-start;padding:.32rem .45rem;border:1px solid transparent;border-radius:9px;cursor:pointer;font-size:.83rem;color:var(--muted)}
+.opt:hover{background:var(--card2)}
+.opt input{margin-top:.32rem;accent-color:var(--teal)}
+.opt.correct{background:rgba(70,224,184,.13);border-color:rgba(70,224,184,.45);color:var(--ink)}
+.opt.wrong{background:rgba(255,125,125,.12);border-color:rgba(255,125,125,.45);color:var(--ink)}
+.explain{display:none;margin-top:.5rem;padding:.5rem .65rem;border-radius:9px;background:var(--card2);color:var(--muted);font-size:.8rem;border-right:3px solid var(--yellow)}
+.explain.show{display:block}
+
+/* ─── Checklist ─── */
+.check-head{display:flex;justify-content:space-between;gap:1rem;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.8rem 1.1rem;margin-bottom:.7rem;flex-wrap:wrap}
+.check-head p{margin:.2rem 0 0;color:var(--muted);font-size:.85rem}
+.progress-box{display:flex;align-items:center;gap:.7rem;min-width:200px;flex:1;max-width:340px}
+.progress-track{flex:1;height:10px;border-radius:99px;background:var(--card2);overflow:hidden;border:1px solid var(--line)}
+#progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--blue));transition:.3s}
+#progress-text{font-size:.8rem;color:var(--yellow);white-space:nowrap}
+.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+.check-item{display:flex;gap:.6rem;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.6rem .75rem;cursor:pointer;font-size:.87rem;color:var(--muted)}
+.check-item input{margin-top:.25rem;accent-color:var(--teal);width:17px;height:17px;flex:none}
+.check-item:has(input:checked){border-color:rgba(70,224,184,.45);color:var(--ink)}
+
+/* ─── المصادر ─── */
+.footnote{color:var(--muted);font-size:.8rem;margin-top:.7rem}
+.footer{text-align:center;color:var(--muted);font-size:.8rem;border-top:1px solid var(--line);padding:1.4rem 0 3.5rem;margin-top:2rem}
+
+/* ─── زر العودة للأعلى ─── */
+#top-btn{position:fixed; bottom:1.1rem; left:1.1rem; z-index:60; width:46px;height:46px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--teal);font-size:1.25rem;cursor:pointer;opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow)}
+#top-btn.show{opacity:1;pointer-events:auto}
+
+.search-hidden{display:none !important}
+
+@media(max-width:860px){
+  .quiz-list,.checklist,.formula{grid-template-columns:1fr}
+  .brand small{display:none}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .container{width:min(100% - 1.4rem, 940px)}
+  .topbar-inner{flex-wrap:wrap;gap:.4rem;padding:.45rem 0}
+  .tabs{order:3;flex-basis:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important; animation:none !important}
+}
 @media print{
-  :root{--bg:#fff;--card:#fff;--card2:#f6f8ff;--ink:#111;--muted:#444;--line:#ccc;--shadow:none}
-  body{background:#fff;color:#111}
-  .topbar,.noprint,.hero-actions,.tools,.card-actions,.quiz-actions{display:none!important}
-  .wrap{max-width:none;padding:0}
-  .card,.summary-strip,.board{box-shadow:none;break-inside:avoid;page-break-inside:avoid}
-  .board{background:#fff;color:#111;border:2px solid #bbb;transform:none}
-  .code-wrap{background:#f4f6fb}
-  pre{white-space:pre-wrap;max-height:none}
-  pre code{color:#111}
-  .tok-k,.tok-s,.tok-c,.tok-n,.tok-f{color:#111!important;font-weight:normal;font-style:normal}
-  section.topic{margin-bottom:26px}
-  details{display:block}
+  .topbar,.hero-actions,#scroll-progress,#top-btn,.quiz-top,.quiz-actions,.copy-line{display:none !important}
+  body{background:#fff;color:#111;font-size:12px}
+  .qa,.quiz-card,.code-qa{break-inside:avoid;border:1px solid #bbb}
+  .qa[open] .qa-body{display:block}
+  section.topic{padding:.5rem 0}
 }
 </style>
 </head>
 <body data-theme="dark">
-<header class="topbar noprint">
-  <div class="topbar-inner">
-    <a class="brand" href="#home"><span class="brand-mark">AI</span><span>Exam Review<small>بكرا عملي · خليني أركز</small></span></a>
-    <nav class="tabs"><a href="#home" data-nav="home">الخريطة</a>
-<a href="#pipeline-section" data-nav="pipeline-section">القالب</a>
-<a href="#optimization" data-nav="optimization">Optimization</a>
-<a href="#regularization" data-nav="regularization">Regularization</a>
-<a href="#svm" data-nav="svm">SVM · SVR · SVC</a>
-<a href="#ready" data-nav="ready">كود جاهز</a>
-<a href="#quiz" data-nav="quiz">تدريب</a>
-<a href="#checklist" data-nav="checklist">Checklist</a>
-<a href="#sources" data-nav="sources">المصادر</a></nav>
-    <div class="tools">
-      <input id="search" class="search" type="search" placeholder="ابحث بالكود…" aria-label="بحث">
-      <button id="theme-btn" class="icon-btn" type="button" title="تبديل الثيم">☀</button>
-      <button id="print-btn" class="icon-btn" type="button" title="طباعة">⎙</button>
-    </div>
+
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="#home"><span class="brand-mark">AI</span><span>Exam Review<small>أسئلة اشرح — بدون كتابة كود</small></span></a>
+    <nav class="tabs" aria-label="التنقل">
+      <a href="#home" data-nav="home" class="active">الرئيسية</a>
+      <a href="#how" data-nav="how">كيف تجاوب</a>
+      <a href="#optimization" data-nav="optimization">Optimization</a>
+      <a href="#regularization" data-nav="regularization">Regularization</a>
+      <a href="#svm" data-nav="svm">SVM · SVR · SVC</a>
+      <a href="#code-qa" data-nav="code-qa">اشرح الكود</a>
+      <a href="#quiz" data-nav="quiz">كويز</a>
+      <a href="#checklist" data-nav="checklist">Checklist</a>
+      <a href="#sources" data-nav="sources">المصادر</a>
+    </nav>
+    <button id="theme-btn" class="icon-btn" type="button" title="تبديل الثيم" aria-label="تبديل الثيم">☀</button>
+    <button id="print-btn" class="icon-btn" type="button" title="طباعة" aria-label="طباعة">⎙</button>
   </div>
 </header>
 
-<main class="wrap">
-  <section class="topic" id="home">
-<div class="hero-grid">
-  <div class="hero-copy">
-    <div class="pill-row">
-      <span class="pill">Optimization</span>
-      <span class="pill">Regularization</span>
-      <span class="pill">SVM · SVR · SVC</span>
+<main>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="home">
+  <div class="container">
+    <p class="eyebrow">امتحان بكرة · أسئلة «اشرح» مو «اكتب كود»</p>
+    <h1>الأسئلة جاية <span class="hl">اشرح</span> —<br>فخلّينا نفهم، مش نحفظ.</h1>
+    <p class="lead">كل سؤال بالعملي هون إله <b>جواب نموذجي قصير</b>: تعريف بجملة + «ليش» + مثال من المحاضرة + فخ شائع يقع فيه الكل. افتح السؤال، اقرأ الجواب، انسخه بأسلوبك، وبعدها حل الكويز (٢٠ سؤال اختياري).</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#how">كيف تجاوب أي سؤال اشرح؟</a>
+      <a class="btn" href="#quiz">حل الكويز (٢٠ سؤال)</a>
     </div>
-    <h1>مذاكرة عملية للامتحان<br><span>على خطوات البورد، سطر بسطر</span></h1>
-    <p class="lead">هاي الصفحة مبنية على أكواد المحاضرات الموجودة بالريبو، مختصرة ومترجمة: شو بنستورد، شو بنعالج، شو بندرّب، وكيف بنقرأ النتيجة. ابدأ من «القالب الذهبي» وبعدين افتح القسم اللي الدكتور ركّز عليه.</p>
-    <div class="hero-actions noprint">
-      <a class="btn primary" href="#pipeline-section">ابدأ بالقالب</a>
-      <a class="btn" href="#quiz">اختبر حالك</a>
-      <button type="button" class="btn" id="exam-mode">وضع الحفظ</button>
-    </div>
-    <div class="mini-stats">
-      <div><strong>5</strong><span>خطوات البورد</span></div>
-      <div><strong>5</strong><span>Optimizers</span></div>
-      <div><strong>3</strong><span>Regularizers</span></div>
-      <div><strong>12</strong><span>ملف كود أصلي</span></div>
+    <div class="stat-row" aria-hidden="true">
+      <span class="stat"><b>٣</b> مواضيع</span>
+      <span class="stat"><b>٢١</b> سؤال اشرح مع جواب</span>
+      <span class="stat"><b>٢٠</b> سؤال اختياري</span>
+      <span class="stat"><b>٤</b> «اشرح هالكود»</span>
     </div>
   </div>
-
-  <div class="board" aria-label="خطوات البورد من الصورة">
-    <div class="board-header"><span>السبورة → الخريطة</span><span class="board-dots">● ● ●</span></div>
-    <ol class="steps">
-      <li><b>1</b><div><strong>Import Library</strong><code>import numpy, sklearn, torch, tf</code></div></li>
-      <li><b>2</b><div><strong>Import Data</strong><code>read_csv / load_iris / load_breast_cancer</code></div></li>
-      <li><b>3</b><div><strong>Pre-processing</strong><code>split → StandardScaler → fit_transform/transform</code></div></li>
-      <li><b>4</b><div><strong>Train Algorithm</strong><code>.fit() / forward-backward-update</code></div></li>
-      <li><b>5</b><div><strong>Test · Validation · Prediction · Figure out</strong><code>predict → metric → best_params_ / val_loss</code></div></li>
-    </ol>
-  </div>
-</div>
-
-<div class="summary-strip searchable" data-search>
-  <h3>الخلاصة بـ ١٢ سطر قبل ما تنام</h3>
-  <div class="summary-grid">
-    <div><span>01</span><p><b>SVC</b> للتصنيف، <b>SVR</b> للأرقام المستمرة.</p></div>
-    <div><span>02</span><p>قبل SVM: <code>split</code> ثم <code>fit_transform</code> على الترين و<code>transform</code> على التيست.</p></div>
-    <div><span>03</span><p><code>C ↑</code> = تنظيم أضعف / حدّ أضيق. <code>gamma ↑</code> = حدّ أعقد / overfitting.</p></div>
-    <div><span>04</span><p><code>epsilon</code> في SVR = عرض أنبوب التسامح.</p></div>
-    <div><span>05</span><p>SGD: <code>W += -lr*dW</code>. Momentum يخزّن آخر تحديث.</p></div>
-    <div><span>06</span><p>AdaGrad يجمع <code>dW²</code>؛ RMSprop متوسط أُسّي؛ Adam الاثنين + bias correction.</p></div>
-    <div><span>07</span><p>كل optimizer يحدّث <b>weights و biases</b> ويحط <code>epsilon</code> بالقاسم.</p></div>
-    <div><span>08</span><p>الترتيب: <code>pre</code> → <code>update_params</code> لكل طبقة → <code>post</code>.</p></div>
-    <div><span>09</span><p>EarlyStopping يحتاج <code>validation_split</code> و <code>callbacks=[...]</code>.</p></div>
-    <div><span>10</span><p>Dropout وقت التقييم: <code>model.eval()</code> + <code>torch.no_grad()</code>.</p></div>
-    <div><span>11</span><p>BatchNorm بالكود: <code>Dense → BatchNormalization → Activation('relu')</code>.</p></div>
-    <div><span>12</span><p>Figure out = اشرح النتيجة: accuracy / val_loss / best_params_ / support vectors.</p></div>
-  </div>
-</div>
-</section>
-  
-<section class="topic" id="pipeline-section">
-  <div class="section-head">
-    <div class="section-num">01</div>
-    <div>
-      <p class="kicker">Whiteboard → Code</p>
-      <h2>القالب الذهبي</h2>
-    </div>
-  </div>
-  
-<div class="callout">
-  <b>الفكرة:</b> أغلب أسئلة العملي هي نفس القالب، بس يتغيّر <code>model</code> و <code>metric</code>. احفظ الترتيب وما تخلط بين <code>fit_transform</code> و <code>transform</code>.
-</div>
-
-<article class="card searchable" id="imports-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">الخطوة ١</span>
-      <h3> شنو بنستورد؟</h3>
-      <p>قائمة imports جاهزة لكل المواضيع الثلاثة.</p>
-    </div>
-    <div class="card-actions noprint">
-      
-      <button type="button" class="btn tiny copy-btn" data-copy="imports-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-imports-card"># 1) Import Library — خزّنها بالذاكرة
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedShuffleSplit
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC, SVR
-from sklearn.metrics import accuracy_score, classification_report
-from sklearn.metrics import mean_squared_error, r2_score
-
-# Optimization / nnfs
-import nnfs
-from nnfs.datasets import spiral_data
-
-# Regularization / TensorFlow + Keras
-import tensorflow as tf
-from tensorflow.keras.callbacks import EarlyStopping
-
-# Regularization / PyTorch
-import torch
-import torch.nn as nn
-import torch.optim as optim</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>ما لازم تحفظ كل سطر حرفياً، بس لازم تعرف من وين بيجي <code>SVC</code> و <code>EarlyStopping</code> و <code>nn.Dropout</code>.</div></div>
-</article>
-
-<article class="card searchable" id="pipeline-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">الخطوات ٢–٥</span>
-      <h3>القالب الذهبي</h3>
-      <p>من <code>read_csv</code> لحد طباعة الـ accuracy.</p>
-    </div>
-    <div class="card-actions noprint">
-      
-      <button type="button" class="btn tiny copy-btn" data-copy="pipeline-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-pipeline-card"># خارطة البورد: 1 Library → 2 Data → 3 Pre-processing → 4 Train → 5 Test / Figure out
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC                     # SVR لو y رقم مستمر
-from sklearn.metrics import accuracy_score     # classification_report كمان
-
-# 2) Import Data
-df = pd.read_csv(&quot;data.csv&quot;)
-X = df.drop(&quot;target_class&quot;, axis=1)
-y = df[&quot;target_class&quot;]
-
-# 3) Pre-processing
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)        # fit + transform على الترين فقط
-X_test = scaler.transform(X_test)              # transform فقط على التيست
-
-# 4) Train Algorithm
-model = SVC(kernel=&quot;rbf&quot;, C=1.0, gamma=&quot;scale&quot;)
-model.fit(X_train, y_train)
-
-# 5) Test / Validation / Prediction / Figure out
-y_pred = model.predict(X_test)
-print(&quot;Accuracy:&quot;, accuracy_score(y_test, y_pred))
-print(classification_report(y_test, y_pred))
-print(&quot;support vectors:&quot;, model.support_vectors_.shape)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div><code>support_vectors_.shape</code> خطوة «Figure out»: بتحكي قدّيش عيّنة صارت مسؤولة عن الحدّ.</div></div>
-</article>
-
 </section>
 
+<!-- ══════════ كيف تجاوب ══════════ -->
+<section class="topic" id="how">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠٠</div>
+      <div><p class="kicker">وصفة الجواب النموذجي</p><h2>كيف تجاوب أي سؤال «اشرح»؟</h2></div>
+    </div>
+    <p class="topic-intro">كل جواب بالصفحة ماشي على نفس الوصفة. لو حفظت هي الوصفة، حتى الأسئلة اللي ما شفتها بتطلع مرتبة وواثقة:</p>
+    <div class="formula" aria-label="وصفة الجواب">
+      <div><span>١ · التعريف بجملة</span><b>شو هو؟</b><br>عرّفه بكلماتك بأبسط شكل، بدون حشو.</div>
+      <div><span>٢ · ليش موجود؟</span><b>المشكلة اللي بيحلها</b><br>اذكر المشكلة قبل الحل — هاي اللي بميّز الجواب القوي.</div>
+      <div><span>٣ · مثال من المحاضرة</span><b>ربط بكود حقيقي</b><br>سطر كود أو اسم دالة من المحاضرات (مثل <code>model.eval()</code>).</div>
+    </div>
+    <div class="golden"><b>نصيحة ذهبية:</b> الدكتور بدور على الفهم، مو على الحفظ الحرفي. جواب فيه «ليش» + مثال من المحاضرة أقوى من حفظ تعريف أكاديمي. والفخ الأكبر بكل سؤال: <b>نسيان التفاصيل الصغيرة اللي بتغيّر المعنى</b> (مثل <code>transform</code> بدل <code>fit_transform</code> عالتيست).</div>
+  </div>
+</section>
 
+<!-- ══════════ OPTIMIZATION ══════════ -->
 <section class="topic" id="optimization">
-  <div class="section-head">
-    <div class="section-num">02</div>
-    <div>
-      <p class="kicker">SGD · Momentum · AdaGrad · RMSprop · Adam</p>
-      <h2>Optimization</h2>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠١</div>
+      <div><p class="kicker">SGD · Momentum · AdaGrad · RMSprop · Adam</p><h2>Optimization — «كيف الأوزان بتتعلّم؟»</h2></div>
+    </div>
+    <p class="topic-intro">الـ Optimization هو طريقة تصحيح الأوزان بعد ما حسبنا المشتقات. افتح كل سؤال — الجواب هو اللي بتحكيه بصوتك بالامتحان:</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١</span>اشرح كيف SGD يحدّث الأوزان؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> الشبكة بست تطلع تنبؤ غلط → بنحسب قيمة الخطأ (الـ <code>loss</code>) → بنحسب مشتقة الـ loss بالنسبة لكل وزن (<code>dW</code>) — يعني قد إيه الوزن مسؤول عن الخطأ → بنحدّث الوزن <b>عكس اتجاه المشتقة</b>: <code>W = W − lr · dW</code>. الـ <code>lr</code> هو طول الخطوة: صغير = تعلّم بطيء جدًا، كبير = قفز فوق النقطة المثلى وعدم استقرار.</p>
+        <p class="trap"><b>فخ شائع:</b> تقول «بنزوّد» الأوزان — لا، دايمًا <b>عكس</b> اتجاه نمو الـ loss (ناقص).</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٢</span>ما فائدة <code>momentum</code>؟ وما هو الـ LR decay؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> Momentum بيضيف «قصور ذاتي» للتحديث: <code>v = β·v − lr·dW</code> ثم <code>W = W + v</code> — يعني التحديث الحالي بيتراكم مع التحديثات السابقة في نفس الاتجاه. النتيجة: تسريع الاتجاه الثابت وتخفيف التذبذب (مثل كرة ثلج بتنزل). أما <b>LR decay</b> فهو تناقص الـ learning rate مع الزمن: <code>lr_t = lr₀ / (1 + decay · iterations)</code> — بداية سريعة ثم خطوات أدق كل ما قربنا من الحل.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن momentum «يوقف» التعلم — لا، وظيفته تسريع وتنعيم، مو إيقاف. والقيم بالمحاضرات: <code>decay=1e-3, momentum=0.9</code>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٣</span>اشرح الفرق بين AdaGrad و RMSprop.<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> الاثنان بيكيّفون الـ learning rate لكل وزن على حدة حسب مربعات التدرج (<code>dW²</code>). <b>AdaGrad</b> يجمعها تراكميًا: <code>cache += dW²</code> — المشكلة إنه الـ lr بيصغر باستمرار وبيوصل لمرحلة ما عاد يتعلم فيها («تجميد» مبكر). <b>RMSprop</b> بيستعمل <b>متوسطًا أُسّيًا</b> بدل الجمع الكامل: <code>cache = ρ·cache + (1−ρ)·dW²</code> مع <code>ρ ≈ 0.999</code> — يعني بينسى التدرجات القديمة تدريجيًا، والـ lr ما بيموت.</p>
+        <p class="trap"><b>فخ شائع:</b> تخلط <code>cache +=</code> (AdaGrad) مع سطر <code>cache = rho*cache + ...</code> (RMSprop). هاي بالضبط نوعية أسئلة الاختيار من متعدد.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٤</span>اشرح Adam ولماذا هو الأشهر؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> Adam = <b>Momentum + RMSprop + تصحيح تحيّز</b>. بيحتفظ بلحظة أولى <code>m</code> (متوسط التدرجات ≈ momentum) ولحظة ثانية <code>v</code> (متوسط مربعات التدرجات ≈ RMSprop)، ثم بيصحّح تحيّزهما أول الخطوات: <code>m̂ = m / (1 − β₁ᵗ)</code> و <code>v̂ = v / (1 − β₂ᵗ)</code>، وأخيرًا <code>W += −lr · m̂ / (√v̂ + ε)</code>. الأشهر لأنو بيشتغل صح من المحاولة الأولى تقريبًا، ما بيحتاج ضبط كتير للـ hyperparameters.</p>
+        <p class="trap"><b>فخ شائع:</b> تنسى الـ bias correction أو تنسى الـ <code>iterations + 1</code> بـ post_update — الامتحان بيسأل عنها بالتحديد.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٥</span>ما وظيفة <code>pre_update_params</code> و <code>post_update_params</code>؟ ولماذا <code>hasattr</code>؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> الترتيب: <b>pre مرة وحدة ← update_params لكل طبقة (dense1 ثم dense2) ← post مرة وحدة</b>. <code>pre</code> يحسب الـ learning rate الناقص بالمدة (LR decay) قبل أي تحديث، و<code>post</code> يزيد <code>iterations</code> بـ 1 بعد ما كل الطبقات تتحدث — حتى التصحيح الخاص بالـ iterations في Adam يكون متسق بين الطبقات. <code>hasattr(optimizer, "pre_update_params")</code> موجودة لأن <b>SGD العادي ما عنده</b> هاتين الدالتين — فنحمي الكود من الانهيار لو تبدّل الـ optimizer بسطر واحد.</p>
+        <p class="trap"><b>فخ شائع:</b> تقول pre/post لكل طبقة — غلط؛ pre و post <b>مرة وحدة لكل خطوة تدريب</b>، وupdate_params <b>لكل طبقة</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٦</span>لماذا نحط <code>epsilon</code> بالقاسم (<code>√cache + ε</code>)؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> حتى ما يصير <b>قسمة على صفر</b> لو الـ cache صار قدّ الصفر (أوزان ما بتتحرك، أو مربعات تدرجات صغيرة جدًا). الـ <code>ε</code> قيمة صغيرة ثابتة (مثل <code>1e-7</code>) تضمن إن القاسم دايمًا أكبر من صفر بدون ما تغيّر النتيجة عمليًا.</p>
+        <p class="trap"><b>فخ شائع:</b> تحسبه «برامتر تعليمي» — لا، وظيفته رقمية بحتة: حماية من القسمة على صفر.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <div class="table-wrap" role="region" aria-label="جدول مقارنة الـ optimizers">
+      <table>
+        <thead><tr><th>الاسم</th><th>الفكرة بكلمة</th><th>السطر المميّز</th><th>إعدادات المحاضرة</th></tr></thead>
+        <tbody>
+          <tr><td><b>SGD</b></td><td>خطوة ثابتة بسيطة</td><td><code>W += -lr*dW</code></td><td><code>Optimizer_SGD()</code></td></tr>
+          <tr><td><b>SGD + Momentum</b></td><td>كرة ثلج بتسرّع بالاتجاه</td><td><code>v = m*v - lr*dW</code></td><td><code>decay=1e-3, momentum=0.9</code></td></tr>
+          <tr><td><b>AdaGrad</b></td><td>خطوة لكل وزن حسب تاريخه</td><td><code>cache += dW**2</code></td><td><code>decay=1e-4</code> · خطر: الـ lr بيموت</td></tr>
+          <tr><td><b>RMSprop</b></td><td>متوسط أُسّي بدل التراكم</td><td><code>cache = rho*cache + (1-rho)*dW**2</code></td><td><code>lr=0.02, decay=1e-5, rho=0.999</code></td></tr>
+          <tr><td><b>Adam</b></td><td>Momentum + RMSprop + تصحيح</td><td><code>m_hat / (sqrt(v_hat)+eps)</code></td><td><code>lr=0.05, decay=5e-7</code></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
-  
-<div class="callout accent">
-  <b>قاعدة الامتحان:</b> Optimization = كيف نحدّث الأوزان بعد ما حسبنا <code>dweights</code> و <code>dbiases</code>. كل الكلاسات بنفس الشكل: <code>__init__</code> → <code>pre_update_params</code> → <code>update_params(layer)</code> → <code>post_update_params</code>.
-</div>
-
-<div class="table-wrap searchable" data-search>
-  <table class="compare">
-    <thead><tr><th>Algorithm</th><th>السطر اللي بيميّزه</th><th>إعدادات المحاضرة</th><th>انتبه</th></tr></thead>
-    <tbody>
-      <tr><td><b>SGD</b></td><td dir="ltr"><code>W += -lr * dW</code></td><td><code>Optimizer_SGD()</code></td><td>ما عنده pre/post</td></tr>
-      <tr><td><b>+ Momentum</b></td><td dir="ltr"><code>v = m*v - lr*dW</code></td><td><code>decay=1e-3, momentum=0.9</code></td><td><code>np.zeros_like</code> أول مرة</td></tr>
-      <tr><td><b>AdaGrad</b></td><td dir="ltr"><code>cache += dW**2</code></td><td><code>decay=1e-4</code></td><td>lr بيصغر تراكمياً</td></tr>
-      <tr><td><b>RMSprop</b></td><td dir="ltr"><code>cache = rho*cache + (1-rho)*dW**2</code></td><td><code>lr=0.02, decay=1e-5, rho=0.999</code></td><td>ما بيجمع للأبد</td></tr>
-      <tr><td><b>Adam</b></td><td dir="ltr"><code>m_hat / (sqrt(v_hat)+eps)</code></td><td><code>lr=0.05, decay=5e-7</code></td><td><code>iterations + 1</code> للتصحيح</td></tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="formula-strip">
-  <div><span>LR decay</span><code dir="ltr">lr_t = lr0 / (1 + decay * iterations)</code></div>
-  <div><span>Adagrad / RMS / Adam</span><code dir="ltr">W += -lr * dW / (sqrt(cache) + eps)</code></div>
-  <div><span>Adam correction</span><code dir="ltr">m̂ = m / (1 - β1^t), v̂ = v / (1 - β2^t)</code></div>
-</div>
-
-<article class="card searchable" id="nnfs-frame-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">إطار مشترك</span>
-      <h3>حلقة التدريب + تبديل الـ optimizer بسطر</h3>
-      <p>نسخة مختصرة وصالحة للتشغيل؛ الأصل أطول بسبب الرسوم.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_Adam.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="nnfs-frame-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-nnfs-frame-card"># إطار مشترك لكل أسئلة Optimization: غيّر بس سطر optimizer
-import numpy as np
-from nnfs.datasets import spiral_data
-
-class Layer_Dense:
-    def __init__(self, n_inputs, n_neurons):
-        self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
-        self.biases = np.zeros((1, n_neurons))
-    def forward(self, inputs):
-        self.inputs = inputs
-        self.output = np.dot(inputs, self.weights) + self.biases
-    def backward(self, dvalues):
-        self.dweights = np.dot(self.inputs.T, dvalues)
-        self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
-        self.dinputs = np.dot(dvalues, self.weights.T)
-
-class Activation_ReLU:
-    def forward(self, inputs):
-        self.inputs = inputs
-        self.output = np.maximum(0, inputs)
-    def backward(self, dvalues):
-        self.dinputs = dvalues.copy()
-        self.dinputs[self.inputs &lt;= 0] = 0
-
-class Softmax_CrossEntropy:
-    def forward(self, inputs, y_true):
-        exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
-        self.output = exp_values / np.sum(exp_values, axis=1, keepdims=True)
-        clipped = np.clip(self.output, 1e-7, 1 - 1e-7)
-        return np.mean(-np.log(clipped[range(len(y_true)), y_true]))
-    def backward(self, y_true):
-        samples = len(y_true)
-        self.dinputs = self.output.copy()
-        self.dinputs[range(samples), y_true] -= 1
-        self.dinputs /= samples
-
-X, y = spiral_data(samples=100, classes=3)
-dense1, activation1 = Layer_Dense(2, 64), Activation_ReLU()
-dense2 = Layer_Dense(64, 3)
-loss_activation = Softmax_CrossEntropy()
-
-# ====== بدّل هالسطر حسب المطلوب ======
-optimizer = Optimizer_Adam(learning_rate=0.05, decay=5e-7)
-# optimizer = Optimizer_SGD()
-# optimizer = Optimizer_SGD(decay=1e-3, momentum=0.9)
-# optimizer = Optimizer_Adagrad(decay=1e-4)
-# optimizer = Optimizer_RMSprop(learning_rate=0.02, decay=1e-5, rho=0.999)
-
-for epoch in range(10_001):
-    dense1.forward(X)
-    activation1.forward(dense1.output)
-    dense2.forward(activation1.output)
-    loss = loss_activation.forward(dense2.output, y)
-    acc = np.mean(np.argmax(loss_activation.output, axis=1) == y)
-
-    loss_activation.backward(y)
-    dense2.backward(loss_activation.dinputs)
-    activation1.backward(dense2.dinputs)
-    dense1.backward(activation1.dinputs)
-
-    if hasattr(optimizer, &quot;pre_update_params&quot;):
-        optimizer.pre_update_params()
-    optimizer.update_params(dense1)
-    optimizer.update_params(dense2)
-    if hasattr(optimizer, &quot;post_update_params&quot;):
-        optimizer.post_update_params()
-
-    if epoch % 100 == 0:
-        print(f&quot;epoch={epoch}, loss={loss:.3f}, acc={acc:.3f}&quot;)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div><code>hasattr</code> بيحميك لو استعملت SGD العادي اللي ما عنده <code>pre/post</code>. المصدر: ملفات المحاضرة الثالثة.</div></div>
-</article>
-
-<article class="card searchable" id="sgd-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">Optimizer 1</span>
-      <h3>SGD العادي</h3>
-      <p>أبسط تحديث؛ هو أساس كل اللي بعده.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_SGD.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="sgd-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-sgd-card"># SGD — من SGD_Stochastic_Gradient_Descent.py
-class Optimizer_SGD:
-    def __init__(self, learning_rate=1.0):
-        self.learning_rate = learning_rate
-
-    def update_params(self, layer):
-        layer.weights += -self.learning_rate * layer.dweights
-        layer.biases += -self.learning_rate * layer.dbiases
-
-optimizer = Optimizer_SGD()          # lr=1.0 في ملف المحاضرة
-optimizer.update_params(dense1)
-optimizer.update_params(dense2)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>الإشارة سالبة لأننا بننزل عكس التدرّج. ولا تنسَ الـ <code>biases</code>.</div></div>
-</article>
-
-<article class="card searchable" id="momentum-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">Optimizer 2</span>
-      <h3>SGD + Decay + Momentum</h3>
-      <p>نفس الكلاس بيخدم الحالتين: مع أو بدون momentum.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_SGD_Momentum.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="momentum-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-momentum-card"># SGD + LR decay + Momentum — من SGD_with_Momentum.py / Adaptive_Gradient.py
-class Optimizer_SGD:
-    def __init__(self, learning_rate=1.0, decay=0., momentum=0.):
-        self.learning_rate = learning_rate
-        self.current_learning_rate = learning_rate
-        self.decay = decay
-        self.iterations = 0
-        self.momentum = momentum
-
-    def pre_update_params(self):
-        if self.decay:
-            self.current_learning_rate = self.learning_rate * (
-                1. / (1. + self.decay * self.iterations)
-            )
-
-    def update_params(self, layer):
-        if self.momentum:
-            if not hasattr(layer, &quot;weight_momentums&quot;):
-                layer.weight_momentums = np.zeros_like(layer.weights)
-                layer.bias_momentums = np.zeros_like(layer.biases)
-
-            weight_updates = (self.momentum * layer.weight_momentums) \
-                - (self.current_learning_rate * layer.dweights)
-            bias_updates = (self.momentum * layer.bias_momentums) \
-                - (self.current_learning_rate * layer.dbiases)
-            layer.weight_momentums = weight_updates
-            layer.bias_momentums = bias_updates
-        else:
-            weight_updates = -self.current_learning_rate * layer.dweights
-            bias_updates = -self.current_learning_rate * layer.dbiases
-
-        layer.weights += weight_updates
-        layer.biases += bias_updates
-
-    def post_update_params(self):
-        self.iterations += 1
-
-optimizer = Optimizer_SGD(decay=1e-3, momentum=0.9)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div><code>pre</code> بحسب الـ lr الحالي، <code>post</code> بيزيد <code>iterations</code>. لو <code>momentum=0</code> بيرجع SGD عادي مع decay.</div></div>
-</article>
-
-<article class="card searchable" id="adagrad-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">Optimizer 3</span>
-      <h3>AdaGrad</h3>
-      <p>Cache تراكمي لمربّعات التدرّج.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_AdaGrad.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="adagrad-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-adagrad-card"># AdaGrad — cache يجمع مربّعات التدرّجات، فـ lr يصغر مع الوقت
-class Optimizer_Adagrad:
-    def __init__(self, learning_rate=1.0, decay=0., epsilon=1e-7):
-        self.learning_rate = learning_rate
-        self.current_learning_rate = learning_rate
-        self.decay = decay
-        self.iterations = 0
-        self.epsilon = epsilon
-
-    def pre_update_params(self):
-        if self.decay:
-            self.current_learning_rate = self.learning_rate * (
-                1. / (1. + self.decay * self.iterations)
-            )
-
-    def update_params(self, layer):
-        if not hasattr(layer, &quot;weight_cache&quot;):
-            layer.weight_cache = np.zeros_like(layer.weights)
-            layer.bias_cache = np.zeros_like(layer.biases)
-
-        layer.weight_cache += layer.dweights**2
-        layer.bias_cache += layer.dbiases**2
-
-        layer.weights += (-self.current_learning_rate * layer.dweights) / (
-            np.sqrt(layer.weight_cache) + self.epsilon
-        )
-        layer.biases += (-self.current_learning_rate * layer.dbiases) / (
-            np.sqrt(layer.bias_cache) + self.epsilon
-        )
-
-    def post_update_params(self):
-        self.iterations += 1
-
-optimizer = Optimizer_Adagrad(decay=1e-4)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>الفرق الجوهري: <code>+= dW**2</code> مو <code>= rho*cache + ...</code>.</div></div>
-</article>
-
-<article class="card searchable" id="rmsprop-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">Optimizer 4</span>
-      <h3>RMSprop</h3>
-      <p>متوسط أُسّي بدل التراكم.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_RMSprop.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="rmsprop-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-rmsprop-card"># RMSprop — متوسّط أُسّي لمربّعات التدرّجات بدل الجمع التراكمي
-class Optimizer_RMSprop:
-    def __init__(self, learning_rate=0.001, decay=0., epsilon=1e-7, rho=0.9):
-        self.learning_rate = learning_rate
-        self.current_learning_rate = learning_rate
-        self.decay = decay
-        self.iterations = 0
-        self.epsilon = epsilon
-        self.rho = rho
-
-    def pre_update_params(self):
-        if self.decay:
-            self.current_learning_rate = self.learning_rate * (
-                1. / (1. + self.decay * self.iterations)
-            )
-
-    def update_params(self, layer):
-        if not hasattr(layer, &quot;weight_cache&quot;):
-            layer.weight_cache = np.zeros_like(layer.weights)
-            layer.bias_cache = np.zeros_like(layer.biases)
-
-        layer.weight_cache = self.rho * layer.weight_cache \
-            + (1 - self.rho) * layer.dweights**2
-        layer.bias_cache = self.rho * layer.bias_cache \
-            + (1 - self.rho) * layer.dbiases**2
-
-        layer.weights += (-self.current_learning_rate * layer.dweights) / (
-            np.sqrt(layer.weight_cache) + self.epsilon
-        )
-        layer.biases += (-self.current_learning_rate * layer.dbiases) / (
-            np.sqrt(layer.bias_cache) + self.epsilon
-        )
-
-    def post_update_params(self):
-        self.iterations += 1
-
-optimizer = Optimizer_RMSprop(learning_rate=0.02, decay=1e-5, rho=0.999)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div><code>rho</code> بالمحاضرة Final = <code>0.999</code> مع أن الافتراض بالكلاس <code>0.9</code>.</div></div>
-</article>
-
-<article class="card searchable" id="adam-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">Optimizer 5</span>
-      <h3>Adam</h3>
-      <p>Momentum + RMSprop + bias correction.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_Adam.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="adam-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-adam-card"># Adam = Momentum + RMSprop + bias correction
-class Optimizer_Adam:
-    def __init__(self, learning_rate=0.001, decay=0., epsilon=1e-7,
-                 beta_1=0.9, beta_2=0.999):
-        self.learning_rate = learning_rate
-        self.current_learning_rate = learning_rate
-        self.decay = decay
-        self.iterations = 0
-        self.epsilon = epsilon
-        self.beta_1 = beta_1
-        self.beta_2 = beta_2
-
-    def pre_update_params(self):
-        if self.decay:
-            self.current_learning_rate = self.learning_rate * (
-                1. / (1. + self.decay * self.iterations)
-            )
-
-    def update_params(self, layer):
-        if not hasattr(layer, &quot;weight_cache&quot;):
-            layer.weight_momentums = np.zeros_like(layer.weights)
-            layer.weight_cache = np.zeros_like(layer.weights)
-            layer.bias_momentums = np.zeros_like(layer.biases)
-            layer.bias_cache = np.zeros_like(layer.biases)
-
-        layer.weight_momentums = self.beta_1 * layer.weight_momentums \
-            + (1 - self.beta_1) * layer.dweights
-        layer.bias_momentums = self.beta_1 * layer.bias_momentums \
-            + (1 - self.beta_1) * layer.dbiases
-        layer.weight_cache = self.beta_2 * layer.weight_cache \
-            + (1 - self.beta_2) * layer.dweights**2
-        layer.bias_cache = self.beta_2 * layer.bias_cache \
-            + (1 - self.beta_2) * layer.dbiases**2
-
-        step = self.iterations + 1
-        m_hat_w = layer.weight_momentums / (1 - self.beta_1 ** step)
-        m_hat_b = layer.bias_momentums / (1 - self.beta_1 ** step)
-        v_hat_w = layer.weight_cache / (1 - self.beta_2 ** step)
-        v_hat_b = layer.bias_cache / (1 - self.beta_2 ** step)
-
-        layer.weights += (-self.current_learning_rate * m_hat_w) / (
-            np.sqrt(v_hat_w) + self.epsilon
-        )
-        layer.biases += (-self.current_learning_rate * m_hat_b) / (
-            np.sqrt(v_hat_b) + self.epsilon
-        )
-
-    def post_update_params(self):
-        self.iterations += 1
-
-optimizer = Optimizer_Adam(learning_rate=0.05, decay=5e-7)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>أكثر سطر ينِساه الطلاب: <code>step = self.iterations + 1</code> قبل <code>1 - beta ** step</code>.</div></div>
-</article>
-
-<article class="card searchable" id="train-loop-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">ترتيب ثابت</span>
-      <h3>حلقة التدريب كما وردت بالمحاضرة</h3>
-      <p>Forward → Loss/Accuracy → Backward → Optimizer.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_SGD_Momentum.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="train-loop-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-train-loop-card"># ترتيب التدريب اللي لازم تكتبه غيباً
-for epoch in range(10_001):
-    # Forward pass
-    dense1.forward(X)
-    activation1.forward(dense1.output)
-    dense2.forward(activation1.output)
-    loss = loss_activation.forward(dense2.output, y)
-
-    # Accuracy
-    predictions = np.argmax(loss_activation.output, axis=1)
-    accuracy = np.mean(predictions == y)
-
-    # Backward pass
-    loss_activation.backward(loss_activation.output, y)
-    dense2.backward(loss_activation.dinputs)
-    activation1.backward(dense2.dinputs)
-    dense1.backward(activation1.dinputs)
-
-    # Optimizer: pre مرة → update لكل طبقة → post مرة
-    optimizer.pre_update_params()
-    optimizer.update_params(dense1)
-    optimizer.update_params(dense2)
-    optimizer.post_update_params()</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>كود الرسم <code>contourf / pause</code> مش مهم للامتحان؛ ركّز على الـ backward وتحديث الطبقتين.</div></div>
-</article>
-
 </section>
 
-
+<!-- ══════════ REGULARIZATION ══════════ -->
 <section class="topic" id="regularization">
-  <div class="section-head">
-    <div class="section-num">03</div>
-    <div>
-      <p class="kicker">Early Stopping · Dropout · BatchNorm</p>
-      <h2>Regularization</h2>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠٢</div>
+      <div><p class="kicker">L1 · L2 · Dropout · BatchNorm · EarlyStopping</p><h2>Regularization — «منع الحفظ الأعمى»</h2></div>
+    </div>
+    <p class="topic-intro">Regularization هو أي تقنية تمنع الموديل من حفظ بيانات التدريب حرفيًا بدل ما يتعلّم النمط العام. ركّز على «المشكلة اللي كل واحدة بتحلها»:</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٧</span>اشرح مشكلة الـ overfitting بكلماتك.<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> Overfitting يعني إن الموديل <b>حفظ بيانات التدريب بدل ما يتعلّم النمط</b> — النتيجة: دقة عالية جدًا على التدريب ودقة واطية على بيانات جديدة. السبب غالبًا: موديل أعقد من اللازم، أو بيانات قليلة، أو تدريب طويل بدون توقف. الحل: أدوات Regularization (L1/L2/Dropout/EarlyStopping) + بيانات أكثر + بساطة الموديل.</p>
+        <p class="trap"><b>فخ شائع:</b> تقول «الموديل ضعيف» — العكس: الموديل <b>معقّد زيادة</b> وحافظ التفاصيل العشوائية (ضوضاء) كأنها نمط.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٨</span>اشرح الفرق بين L1 و L2 كما ورد بالمحاضرة.<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> الاثنان بيضيفوا «عقوبة» على حجم الأوزان للخسارة عشان يمنعو الأوزان الكبيرة: <b>L1</b> بتضيف مجموع <b>القيم المطلقة</b> <code>λ·Σ|W|</code> — ومن خواصها إنها <b>تصفّر أوزان كاملة</b>، يعني بيصير اختيار ميزات تلقائي (بعطي صفر للميزات غير المهمة). <b>L2</b> بتضيف مجموع <b>المربعات</b> <code>λ·ΣW²</code> — بتصغّر كل الأوزان <b>بدون ما تصفرها</b>، فتمنع سيطرة ميزة وحدة وتخلّي التوزيع متوازن.</p>
+        <p class="trap"><b>فخ شائع:</b> تقول «L2 تصفّر الأوزان» — غلط، L1 هي اللي تصفّر؛ L2 بس بتصغّر.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٩</span>اشرح Dropout وماذا يجب أن تفعل وقت الـ evaluation؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> Dropout بيطفّي عشوائيًا نسبة من الخلايا (مثلاً <code>p=0.3</code> يعني نطفّي 30%) بكل batch أثناء التدريب — الفكرة: ما تعتمد خلية على جارتها، فكل خلية بتتعلم ميزة حقيقية. النتيجة: موديل أقوى يعمّم على بيانات جديدة. <b>وقت الـ evaluation (والاختبار) لازم نطفّيه</b> عبر <code>model.eval()</code> في PyTorch (ويفضّل معها <code>torch.no_grad()</code>)؛ وإلا النتائج بتكون عشوائية وناقصة.</p>
+        <p class="trap"><b>فخ شائع:</b> تنسى <code>model.eval()</code> — هذا أشهر سؤال اشرح/اكتب كود بالامتحان. بالكود: <code>model.train()</code> للتدريب و<code>model.eval()</code> للتقييم.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٠</span>اشرح Batch Normalization — شو بتعمل وليه؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> Batch Normalization بتوحّد مخرجات كل طبقة (تخلي متوسطها قريب من 0 وانحرافها المعياري قريب من 1) قبل تمريرها للطبقة اللي بعدها. الفكرة: التوزيع ما «يتهرب» أثناء التدريب (internal covariate shift)، فبتتعلم <b>أسرع وأكثر استقرارًا</b> وبتتحمل learning rate أعلى. بالكود: <code>Dense(64) → BatchNormalization() → Activation('relu')</code> — دايمًا بين طبقة الكثافة ودالة التفعيل.</p>
+        <p class="trap"><b>فخ شائع:</b> تحطها بعد دالة التفعيل أو في مكان عشوائي — الترتيب الصحيح: <code>Dense → BatchNorm → Activation</code>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١١</span>اشرح EarlyStopping — متى وكيف نتوقف عن التدريب؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> EarlyStopping بيراقب مقياس على <b>بيانات تحقق</b> (عادة <code>val_loss</code>)؛ إذا ما تحسّن لعدد <code>patience</code> من الـ epochs المتتالية → التدريب بيتوقف تلقائيًا، و<code>restore_best_weights=True</code> بترجع أفضل نسخة من الأوزان. الفائدة: توفير وقت + منع overfitting (التدريب بتوقف عند قمة التعميم مو عند الحفظ). شرط أساسي: لازم <code>validation_split</code> أو <code>validation_data</code> داخل <code>model.fit</code>، و<code>callbacks=[early_stopping]</code>.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن EarlyStopping يراقب بيانات التدريب — لا، يراقب الـ <b>validation</b> فقط، وبدونه ما في val_loss أصلاً.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٢</span>اشرح <code>validation_split</code> مقابل <code>callbacks</code> — شو الفرق؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <code>validation_split=0.2</code> بتقول لـ fit: احجز 20% من بيانات التدريب للمراقبة فقط (ما بتدخل بتحديث الأوزان) — عشان نشوف هل الموديل بيعمّم ولا لأ. أما <code>callbacks=[EarlyStopping(...)]</code> فبتمرّر قائمة «ردود أفعال» بتتنفذ بعد كل epoch (مثل مراقبة val_loss واتخاذ قرار التوقف). الاثنان بيشتغلوا سوا: الأول بيوفّر الأرقام، والثاني بياخد القرار.</p>
+        <p class="trap"><b>فخ شائع:</b> تكتب <code>validation_split=0.2</code> بدون <code>callbacks</code> وتنتظر توقف تلقائي — fit رح تكمل كل الـ epochs بدون أي قرار.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <div class="table-wrap" role="region" aria-label="جدول مقارنة أدوات الـ regularization">
+      <table>
+        <thead><tr><th>الأداة</th><th>بتحل مشكلة</th><th>كيف؟</th><th>ملاحظة امتحانية</th></tr></thead>
+        <tbody>
+          <tr><td><b>L1</b></td><td>موديل معتمد على ميزات كثيرة غير مهمة</td><td>عقوبة <code>Σ|W|</code> تصفّر أوزان</td><td>اختيار ميزات تلقائي</td></tr>
+          <tr><td><b>L2</b></td><td>أوزان ضخمة تسيطر على القرار</td><td>عقوبة <code>ΣW²</code> تصغّر الكل</td><td>الأكثر استعمالًا بالتدريب</td></tr>
+          <tr><td><b>Dropout</b></td><td>اعتماد الخلايا على بعض</td><td>إطفاء عشوائي أثناء التدريب</td><td><code>model.eval()</code> وقت التقييم</td></tr>
+          <tr><td><b>BatchNorm</b></td><td>تهرّب توزيع البيانات بين الطبقات</td><td>توحيد المتوسط والانحراف</td><td>بين Dense و Activation</td></tr>
+          <tr><td><b>EarlyStopping</b></td><td>تدريب أكثر من اللازم</td><td>وقف عند توقف تحسن val_loss</td><td>يحتاج validation_split</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
-  
-<div class="callout warning">
-  <b>تنبيه من ملفاتك:</b> المحاضرة الخامسة فيها ثلاث تقنيات: <b>Early Stopping</b>، <b>Dropout</b>، <b>Batch Normalization</b>. ما في ملف مستقل لـ L1/L2؛ أضفتلك卡片 صغيرة للفهم بس، و<code>C</code> الخاص بـ SVM بنشرحه بقسمه.
-</div>
-
-<div class="reg-grid">
-  <div class="reg-card searchable" data-search><span class="reg-icon">⏹</span><h3>Early Stopping</h3><p>يوقف التدريب لمّا <code>val_loss</code> ما يتحسّن.</p><code dir="ltr">patience=3 · restore_best_weights=True</code></div>
-  <div class="reg-card searchable" data-search><span class="reg-icon">◌</span><h3>Dropout</h3><p>يطفئ نسبة من العصبونات وقت التدريب فقط.</p><code dir="ltr">nn.Dropout(p=0.5) · model.eval()</code></div>
-  <div class="reg-card searchable" data-search><span class="reg-icon">μ</span><h3>Batch Normalization</h3><p>يطبّع خرج الطبقة داخل كل batch؛ أثر تنظيمي خفيف.</p><code dir="ltr">Dense → BN → Activation('relu')</code></div>
-</div>
-
-<article class="card searchable" id="early-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">Regularization 1</span>
-      <h3>Early Stopping / Keras</h3>
-      <p>أهم شيء: في <code>validation</code> وفي <code>callbacks</code>.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Regularization_EarlyStopping.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="early-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-early-card"># Early Stopping — TensorFlow / Keras — من المحاضرة الخامسة
-import tensorflow as tf
-from tensorflow.keras.callbacks import EarlyStopping
-
-(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-x_train = x_train / 255.0
-x_test = x_test / 255.0
-
-model = tf.keras.Sequential([
-    tf.keras.layers.Flatten(input_shape=(28, 28)),
-    tf.keras.layers.Dense(128, activation=&quot;relu&quot;),
-    tf.keras.layers.Dense(10, activation=&quot;softmax&quot;)
-])
-model.compile(optimizer=&quot;adam&quot;,
-              loss=&quot;sparse_categorical_crossentropy&quot;,
-              metrics=[&quot;accuracy&quot;])
-
-early_stopping = EarlyStopping(
-    monitor=&quot;val_loss&quot;,
-    patience=3,
-    restore_best_weights=True
-)
-
-history = model.fit(
-    x_train, y_train,
-    epochs=20, batch_size=32,
-    validation_split=0.2,
-    callbacks=[early_stopping],
-    verbose=1
-)
-
-test_loss, test_accuracy = model.evaluate(x_test, y_test)
-print(f&quot;Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}&quot;)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div><code>monitor='val_loss'</code> بدون <code>validation_split=0.2</code> = خطأ. <code>restore_best_weights=True</code> بيرجّع أفضل أوزان.</div></div>
-</article>
-
-<article class="card searchable" id="dropout-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">Regularization 2</span>
-      <h3>Dropout / PyTorch</h3>
-      <p>مقارنة موديل بدون ومع Dropout على MNIST.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Regularization_Dropout.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="dropout-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-dropout-card"># Dropout — PyTorch — أهم سطرين: nn.Dropout(p) + model.train()/eval()
-import torch
-import torch.nn as nn
-import torch.optim as optim
-
-class CNN_WithDropout(nn.Module):
-    def __init__(self, p=0.5):
-        super().__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, padding=1)
-        self.conv2 = nn.Conv2d(32, 64, 3, padding=1)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.dropout = nn.Dropout(p=p)
-        self.fc1 = nn.Linear(64 * 7 * 7, 128)
-        self.fc2 = nn.Linear(128, 10)
-
-    def forward(self, x):
-        x = self.pool(torch.relu(self.conv1(x)))
-        x = self.pool(torch.relu(self.conv2(x)))
-        x = x.view(-1, 64 * 7 * 7)
-        x = self.dropout(torch.relu(self.fc1(x)))
-        return self.fc2(x)
-
-criterion = nn.CrossEntropyLoss()
-model = CNN_WithDropout(p=0.5)
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-
-# داخل التدريب
-model.train()
-optimizer.zero_grad()
-loss = criterion(model(images), labels)
-loss.backward()
-optimizer.step()
-
-# داخل الـ validation / test
-model.eval()
-with torch.no_grad():
-    outputs = model(images)
-    _, preds = torch.max(outputs, 1)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>وقت التدريب <code>model.train()</code>، وقت التقييم <code>model.eval()</code>. ومع التقييم <code>with torch.no_grad()</code>.</div></div>
-</article>
-
-<article class="card searchable" id="batchnorm-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">Regularization 3</span>
-      <h3>Batch Normalization / Keras</h3>
-      <p>MNIST → 784 → Dense(64) → BN → ReLU → Softmax.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Regularization_BatchNorm.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="batchnorm-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-batchnorm-card"># Batch Normalization — TensorFlow / Keras
-import tensorflow as tf
-
-(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
-x_train = x_train.astype(&quot;float32&quot;) / 255.0
-x_test = x_test.astype(&quot;float32&quot;) / 255.0
-x_train = x_train.reshape(-1, 784)[:5000]
-x_test = x_test.reshape(-1, 784)
-y_train = y_train[:5000]
-
-model = tf.keras.Sequential([
-    tf.keras.Input(shape=(784,)),
-    tf.keras.layers.Dense(64),
-    tf.keras.layers.BatchNormalization(),
-    tf.keras.layers.Activation(&quot;relu&quot;),
-    tf.keras.layers.Dense(10, activation=&quot;softmax&quot;)
-])
-model.compile(optimizer=&quot;adam&quot;,
-              loss=&quot;sparse_categorical_crossentropy&quot;,
-              metrics=[&quot;accuracy&quot;])
-model.fit(x_train, y_train, epochs=2, batch_size=32)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>وظيفته الأساسية تثبيت التدريب وتسريعه، بس المادة حطّته مع ملفات الـ Regularization.</div></div>
-</article>
-
-<article class="card searchable" id="l2-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">إضافي</span>
-      <h3>L2 / weight decay و C</h3>
-      <p>للفهم فقط: مش كود محاضرة مستقل.</p>
-    </div>
-    <div class="card-actions noprint">
-      
-      <button type="button" class="btn tiny copy-btn" data-copy="l2-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-l2-card"># إضافي للفهم — مو موجود كملف مستقل بكود المحاضرة
-# L2 / weight decay تقلّل كبر الأوزان، فتقلّل الـ overfitting
-
-# Keras
-dense = tf.keras.layers.Dense(
-    64, activation=&quot;relu&quot;,
-    kernel_regularizer=tf.keras.regularizers.l2(1e-4)
-)
-
-# PyTorch
-optimizer = optim.SGD(model.parameters(), lr=0.01,
-                      momentum=0.9, weight_decay=1e-4)
-
-# SVM: C هو معامل الـ regularization بطريقة معكوسة
-clf = SVC(C=0.01)   # C صغير = تنظيم أقوى / margin أوسع
-clf = SVC(C=100.0)  # C كبير = تنظيم أضعف / محاولة تصحيح كل العيّنات</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>في SVM: <b>C صغير = تنظيم أقوى</b>. في Keras: <code>kernel_regularizer</code>. في PyTorch: <code>weight_decay</code>.</div></div>
-</article>
-
 </section>
 
-
+<!-- ══════════ SVM ══════════ -->
 <section class="topic" id="svm">
-  <div class="section-head">
-    <div class="section-num">04</div>
-    <div>
-      <p class="kicker">Kernels · C / gamma / epsilon · GridSearchCV</p>
-      <h2>SVM · SVR · SVC</h2>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠٣</div>
+      <div><p class="kicker">SVM · SVR · SVC · kernel · C · gamma · epsilon</p><h2>SVM — «الحد اللي يفصل بأكبر هامش»</h2></div>
+    </div>
+    <p class="topic-intro">SVM بتختار الحد اللي يبعد أكبر مسافة ممكنة عن أقرب نقاط من الصفين. هاي النقاط القريبة اسمها <b>Support Vectors</b> وهي اللي «تمسك» الحد — وحذف أي نقطة تانية ما بيغيّر شي.</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٣</span>اشرح ما هو SVM وما وظيفة الـ Support Vectors؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> SVM (Support Vector Machine) خوارزمية بتبحث عن <b>الحد الفاصل بأكبر هامش (margin)</b> بين الأصناف — يعني أبعد خط ممكن عن الطرفين. <b>Support Vectors</b> هي النقاط الواقعة على حدود الهامش (أو داخله)؛ هي الوحيدة المسؤولة عن تحديد الحد، فلو حذفنا أي نقطة تانية من التدريب ما رح يتغير الحد. <b>SVC</b> للتصنيف (فئات)، <b>SVR</b> للانحدار (أرقام مستمرة) — الاختيار حسب نوع y.</p>
+        <p class="trap"><b>فخ شائع:</b> تقول «SVM يستخدم كل نقاط التدريب لتحديد الحد» — غلط؛ بس الـ support vectors.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٤</span>متى نستعمل SVC ومتى SVR؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> بنشوف نوع العمود الهدف y: إذا y <b>فئوي</b> (0/1، نعم/لا، نوع ورم…) → <b>SVC</b> Support Vector Classifier للتصنيف. إذا y <b>رقم مستمر</b> (سعر، حرارة، عمر…) → <b>SVR</b> Support Vector Regressor للانحدار. المكتبة وحدة (<code>sklearn.svm</code>) والمنطق نفسه (أكبر هامش)، لكن الـ loss ودالة التقييم بيختلفوا: accuracy/classification_report للتصنيف، MSE/R² للانحدار.</p>
+        <p class="trap"><b>فخ شائع:</b> تستخدم SVR على y فئوي — بيديك أرقام مستمرة وتحتاج تعيينها يدويًا لأصناف؛ غلط.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٥</span>اشرح برامتر <code>C</code> — ماذا يحدث عند رفعه أو خفضه؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <code>C</code> هو <b>عقوبة خرق الهامش</b> — قد إيه بنعاقب الموديل على كل خطأ داخل/خارج الهامش. <code>C</code> <b>صغير</b> = الموديل متساهل مع بعض الأخطاء مقابل <b>هامش أعرض وتنظيم أقوى</b>. <code>C</code> <b>كبير</b> = عقوبة صارمة فتكون النتيجة <b>هامش ضيق</b> والموديل يحاول يصحّح كل عينات التدريب — يعني تنظيم أضعف وخطر <b>overfitting</b> أعلى.</p>
+        <p class="trap"><b>فخ شائع:</b> تخلط صغير/كبير — احفظ: <b>C كبير = عقوبة كبيرة = يحاول يرضي الكل = overfit</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٦</span>اشرح <code>gamma</code> ومتى نختار قيمة كبيرة أو صغيرة؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <code>gamma</code> بيحدد <b>مدى تأثير كل نقطة تدريب على الحد</b>. <code>gamma</code> <b>كبير</b> = كل نقطة بتؤثر بقعة صغيرة جدًا حواليها → الحد بيصير متعرج ويلتصق بالنقاط — خطر overfitting. <code>gamma</code> <b>صغير</b> = تأثير واسع وناعم → حد أملس وبسيط (ممكن underfit لو زاد الصغر). <code>"scale"</code> (الافتراضي) = <code>1 / (n_features · X.var())</code> — نقطة بداية ممتازة.</p>
+        <p class="trap"><b>فخ شائع:</b> تسأل «γ مع kernel=linear» — بلاش؛ gamma بيأثر فقط مع RBF/poly/sigmoid.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٧</span>اشرح الـ <code>kernel</code> — متى linear ومتى rbf؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> الـ kernel هو طريقة حساب «التشابه» بين النقاط بدون نقلها لفضاء أعلى صراحةً. <code>linear</code>: حد مستقيم — مناسب إذا البيانات بتتنفصل بخط مستقيم (وأسرع مع ميزات كثيرة). <code>rbf</code> (الافتراضي): حد منحني مرن بيقدر يرسم دوائر — مناسب لأنماط غير خطية، وهو خيار المحاضرات الافتراضي. <code>poly</code>: حدود كثيرات حدود (يحتاج <code>degree</code>)، و<code>sigmoid</code> يشبه الشبكة العصبية. القاعدة: ابدأ بـ <code>rbf</code> وجرب linear للمقارنة داخل GridSearchCV.</p>
+        <p class="trap"><b>فخ شائع:</b> تقول «kernel يغيّر عدد الطبقات» — لا علاقة له بطبقات؛ هو شكل دالة القرار.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٨</span>اشرح برامتر <code>epsilon</code> في SVR.<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <code>epsilon</code> (ε) هو <b>نصف عرض «أنبوب التسامح»</b> حول المط المنحنى المتوقع. أي خطأ داخل هالأنبوب <b>ما بتنعاقب عليه</b> بالـ loss (ε-insensitive). ε كبير = أنبوب أوسع = موديل يتساهل مع أخطاء أكثر (underfit محتمل)؛ ε صغير = أنبوب ضيق = يحاول يمر من كل نقطة (overfit محتمل).</p>
+        <p class="trap"><b>فخ شائع:</b> تظن epsilon «وقت توقف» أو «برامتر عشوائي» — هي عرض الأنبوب فقط.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س١٩</span>لماذا <code>StandardScaler</code> قسرًا قبل SVM؟ وش قاعدة التطبيق؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> SVM (وخصوصًا RBF) بحسب <b>مسافات بين نقاط</b>؛ فإذا كانت ميزات بمقياس أكبر بكتير من غيرها، بتسيطر على الحساب وبتدمّر الهامش. StandardScaler بيحوّل كل ميزة لـ متوسط 0 وانحراف معياري 1. <b>القاعدة الذهبية:</b> <code>fit_transform</code> على التدريب <b>فقط</b>، و<code>transform</code> على الاختبار — عشان ما نسرّب معلومة من الاختبار للتدريب (data leakage).</p>
+        <p class="trap"><b>فخ شائع:</b> <code>fit_transform</code> على التيست «لأنه أسهل» — هون التسريب الكلاسيكي اللي الدكتور بيقصده بالسؤال.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">س٢٠</span>اشرح ماذا تفعل <code>GridSearchCV</code>؟ وأين توجد النتيجة؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> GridSearchCV بتجرب <b>كل تركيبات</b> الـ hyperparameters اللي حددناها (مثل <code>C</code> و <code>gamma</code> و <code>kernel</code>) مع <b>cross-validation</b> (تقسيم التدريب لطيّات متعددة)، وتطلع لنا الأفضل بدون تجربة يدوية. النتيجة بتوجد بثلاث خصائص: <code>best_params_</code> (أفضل تركيبة)، <code>best_score_</code> (دقة الـ cross-validation)، <code>best_estimator_</code> (الموديل المدرّب نفسه).</p>
+        <p class="trap"><b>فخ شائع:</b> تكتب <code>grid.best_score_ = ...</code> أو تتوقع النتيجة بـ <code>grid.score_</code> — الصح <code>best_params_</code> / <code>best_score_</code>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <div class="table-wrap" role="region" aria-label="جدول مقارنة أنواع SVM وبرامتراتها">
+      <table>
+        <thead><tr><th>النوع / البرامتر</th><th>وظيفته</th><th>لو زاد / قل</th></tr></thead>
+        <tbody>
+          <tr><td><b>SVC</b></td><td>تصنيف الفئات (y فئوي)</td><td>الدالة: <code>.predict()</code> + accuracy</td></tr>
+          <tr><td><b>SVR</b></td><td>انحدار الأرقام (y مستمر)</td><td>الدالة: <code>.predict()</code> + MSE / R²</td></tr>
+          <tr><td><code>C</code></td><td>عقوبة خرق الهامش</td><td>أكبر = هامش ضيق + overfitting</td></tr>
+          <tr><td><code>gamma</code></td><td>مدى تأثير النقطة (RBF/poly)</td><td>أكبر = حد متعرج</td></tr>
+          <tr><td><code>kernel</code></td><td>شكل الحد</td><td><code>rbf</code> افتراضي و<code>linear</code> للبيانات الخطية</td></tr>
+          <tr><td><code>epsilon</code> (SVR)</td><td>عرض أنبوب التسامح</td><td>أكبر = تساهل أكثر</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
-  
-<div class="decision searchable" data-search>
-  <h3>Decision tree قبل ما تكتب أول سطر</h3>
-  <div class="decision-tree">
-    <div class="root">شو نوع <code>y</code>؟</div>
-    <div class="branch"><span>أصناف / 0 و 1 / labels</span><b>→ SVC</b><small>accuracy_score · classification_report</small></div>
-    <div class="branch"><span>رقم مستمر / sin(X) / سعر</span><b>→ SVR</b><small>mean_squared_error · r2_score · epsilon</small></div>
-  </div>
-</div>
-
-<div class="table-wrap searchable" data-search>
-  <table class="compare params">
-    <thead><tr><th>Parameter</th><th>وين</th><th>ماذا يعمل</th><th>قيم من كود المحاضرة</th></tr></thead>
-    <tbody>
-      <tr><td><code>kernel</code></td><td>SVC + SVR</td><td>شكل حدّ القرار / المنحنى</td><td><code>'rbf', 'linear', 'poly', 'sigmoid'</code></td></tr>
-      <tr><td><code>C</code></td><td>SVC + SVR</td><td>عقوبة أخطاء الـ margin؛ كل ما كبر قلّ التنظيم</td><td><code>0.01, 1, 100, 1000</code> · logspace(-2,10,13)</td></tr>
-      <tr><td><code>gamma</code></td><td>غالباً RBF / poly / sigmoid</td><td>مدى تأثير النقطة الواحدة؛ كبير = حدّ أعقد</td><td><code>10</code> · <code>0.1, 1, 10</code> · logspace(-9,3,13)</td></tr>
-      <tr><td><code>epsilon</code></td><td>SVR فقط</td><td>عرض أنبوب عدم الحساسية</td><td><code>0.1</code></td></tr>
-      <tr><td><code>degree</code> / <code>coef0</code></td><td>SVR poly</td><td>درجة كثير الحدود / الثابت</td><td><code>degree=3, coef0=1</code></td></tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="cg-matrix searchable" data-search>
-  <h3>مصفوفة C / gamma — «Figure out»</h3>
-  <div class="matrix">
-    <div><span>C صغير · gamma صغير</span><p>حدّ ناعم جداً → غالباً <b>underfitting</b>.</p></div>
-    <div><span>C كبير · gamma صغير</span><p>margin أضيق بس الحدّ لسه سلس.</p></div>
-    <div><span>C صغير · gamma كبير</span><p>التعقيد موجود بس التنظيم بجمّعه.</p></div>
-    <div class="hot"><span>C كبير · gamma كبير</span><p>حدّ ملتوي يلاحق كل نقطة → <b>overfitting</b>.</p></div>
-  </div>
-</div>
-
-<article class="card searchable" id="svc-basic-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">SVC</span>
-      <h3>تصنيف كامل: split → scale → fit → predict</h3>
-      <p>من <code>SVM2.py</code> مع <code>load_breast_cancer</code>.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/SVM_SVC_BreastCancer.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="svc-basic-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-svc-basic-card"># SVC كامل — من SVM2.py (تصنيف سرطان الثدي)
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score, classification_report
-
-data = load_breast_cancer()
-X = data.data[:, [0, 1]]     # أول ميزتين للرسم فقط؛ بالامتحان غالباً كل الأعمدة
-y = data.target
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-svm_classifier = SVC(kernel=&quot;rbf&quot;, C=100.0, random_state=42)
-svm_classifier.fit(X_train_scaled, y_train)
-
-y_pred = svm_classifier.predict(X_test_scaled)
-print(f&quot;Accuracy: {accuracy_score(y_test, y_pred):.2f}&quot;)
-print(classification_report(y_test, y_pred,
-                            target_names=data.target_names))</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div><code>data.data[:, [0, 1]]</code> مخصوص للرسم؛ بالامتحان استعمل كل الميزات إلا إذا طلب غير هيك.</div></div>
-</article>
-
-<article class="card searchable" id="svc-kernels-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">SVC</span>
-      <h3>مقارنة Kernels و C</h3>
-      <p>مختصر من <code>svm.py</code> على بيانات Pulsar.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/SVM_SVC_Pulsar.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="svc-kernels-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-svc-kernels-card"># مقارنة Kernels و C — مختصر من svm.py
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
-
-# SVC() الافتراضي: C=1.0 و kernel=&#x27;rbf&#x27;
-# ملاحظة: gamma الافتراضي تغيّر بين إصدارات sklearn (auto / scale)
-experiments = [
-    (&quot;default&quot;, SVC()),
-    (&quot;rbf C=100&quot;, SVC(kernel=&quot;rbf&quot;, C=100.0)),
-    (&quot;rbf C=1000&quot;, SVC(kernel=&quot;rbf&quot;, C=1000.0)),
-    (&quot;linear&quot;, SVC(kernel=&quot;linear&quot;, C=1.0)),
-    (&quot;poly&quot;, SVC(kernel=&quot;poly&quot;, C=1.0, degree=3)),
-    (&quot;sigmoid&quot;, SVC(kernel=&quot;sigmoid&quot;, C=1.0)),
-]
-
-for name, clf in experiments:
-    clf.fit(X_train, y_train)
-    pred = clf.predict(X_test)
-    print(name, accuracy_score(y_test, pred))</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div><code>SVC()</code> = <code>C=1.0</code> و <code>kernel='rbf'</code>. قيمة <code>gamma</code> الافتراضية اختلفت بين إصدارات sklearn.</div></div>
-</article>
-
-<article class="card searchable" id="svr-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">SVR</span>
-      <h3>انحدار بثلاث Kernels</h3>
-      <p><code>y = sin(X)</code> + noise، مع <code>support_</code>.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/SVM_SVR.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="svr-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-svr-card"># SVR — y رقم مستمر، مو Class — من SVR.py
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.svm import SVR
-from sklearn.metrics import mean_squared_error, r2_score
-
-X = np.sort(5 * np.random.rand(40, 1), axis=0)
-y = np.sin(X).ravel()
-y[::5] += 3 * (0.5 - np.random.rand(8))   # noise
-
-svr_rbf = SVR(kernel=&quot;rbf&quot;, C=1, gamma=10, epsilon=0.1)
-svr_lin = SVR(kernel=&quot;linear&quot;, C=100, gamma=&quot;auto&quot;)
-svr_poly = SVR(kernel=&quot;poly&quot;, C=100, gamma=&quot;auto&quot;,
-               degree=3, epsilon=0.1, coef0=1)
-
-for model in [svr_rbf, svr_lin, svr_poly]:
-    model.fit(X, y)
-    pred = model.predict(X)
-    print(&quot;MSE:&quot;, mean_squared_error(y, pred),
-          &quot;R2:&quot;, r2_score(y, pred),
-          &quot;support vectors:&quot;, len(model.support_))</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div><code>epsilon</code> ما بيجي بـ SVC. و <code>degree/coef0</code> مهمين مع <code>kernel='poly'</code>.</div></div>
-</article>
-
-<article class="card searchable" id="grid-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">GridSearchCV</span>
-      <h3>بحث C و gamma على Iris</h3>
-      <p>من <code>RBF_SVM Param.py</code>: <code>np.logspace</code> + <code>StratifiedShuffleSplit</code>.</p>
-    </div>
-    <div class="card-actions noprint">
-      <a class="source-link" href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/SVM_RBF_Params.py" target="_blank" rel="noopener">الأصل .py</a>
-      <button type="button" class="btn tiny copy-btn" data-copy="grid-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-grid-card"># GridSearchCV على C و gamma — من RBF_SVM Param.py
-import numpy as np
-from sklearn.datasets import load_iris
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit
-from sklearn.svm import SVC
-
-iris = load_iris()
-X, y = iris.data, iris.target
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
-
-C_range = np.logspace(-2, 10, 13)
-gamma_range = np.logspace(-9, 3, 13)
-param_grid = dict(gamma=gamma_range, C=C_range)
-
-cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
-grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
-grid.fit(X, y)
-
-print(&quot;best params:&quot;, grid.best_params_)
-print(f&quot;best CV score: {grid.best_score_:.2f}&quot;)
-print(&quot;best estimator:&quot;, grid.best_estimator_)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>ملف المحاضرة بيعمل <code>fit_transform</code> على كل البيانات قبل الـ CV (الكود نفسه كاتب «cheating a bit»). استعمل <code>Pipeline</code> بالامتحان.</div></div>
-</article>
-
-<article class="card searchable" id="grid-safe-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">نسخة آمنة</span>
-      <h3>GridSearchCV مع Pipeline</h3>
-      <p>يمنع leakage لأن الـ scaler بيتدرّب داخل كل fold.</p>
-    </div>
-    <div class="card-actions noprint">
-      
-      <button type="button" class="btn tiny copy-btn" data-copy="grid-safe-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-grid-safe-card"># نسخة آمنة للامتحان: الـ scaling داخل CV بواسطة Pipeline (بدون leakage)
-import numpy as np
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score, classification_report
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
-
-pipe = make_pipeline(StandardScaler(), SVC())
-param_grid = {
-    &quot;svc__C&quot;: np.logspace(-2, 3, 6),
-    &quot;svc__gamma&quot;: np.logspace(-4, 1, 6),
-    &quot;svc__kernel&quot;: [&quot;rbf&quot;, &quot;linear&quot;],
-}
-grid = GridSearchCV(pipe, param_grid, cv=5, scoring=&quot;accuracy&quot;, n_jobs=-1)
-grid.fit(X_train, y_train)
-
-print(grid.best_params_, grid.best_score_)
-y_pred = grid.predict(X_test)
-print(accuracy_score(y_test, y_pred))
-print(classification_report(y_test, y_pred))</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>أسماء البارامترات بتبدل لـ <code>svc__C</code> و <code>svc__gamma</code> بسبب الـ <code>make_pipeline</code>.</div></div>
-</article>
-
-<article class="card searchable" id="exam-switch-card" data-search>
-  <div class="card-head">
-    <div class="card-title">
-      <span class="eyebrow">سطر الحسم</span>
-      <h3>SVC ولا SVR؟</h3>
-      <p>مجرّد تذكير منطقي قبل كتابة الموديل.</p>
-    </div>
-    <div class="card-actions noprint">
-      
-      <button type="button" class="btn tiny copy-btn" data-copy="exam-switch-card">نسخ الكود</button>
-    </div>
-  </div>
-  <div class="code-wrap">
-    <pre dir="ltr"><code class="python" id="code-exam-switch-card"># سطر واحد يقرّر المسار الصح
-# y = أصناف / labels  → تصنيف → SVC + accuracy_score
-# y = رقم مستمر       → انحدار → SVR + mean_squared_error / r2_score
-
-def build_model(y):
-    if len(np.unique(y)) &lt;= 10 and np.all(y == y.astype(int)):
-        return SVC(kernel=&quot;rbf&quot;, C=1.0, gamma=&quot;scale&quot;)
-    return SVR(kernel=&quot;rbf&quot;, C=1.0, gamma=&quot;scale&quot;, epsilon=0.1)
-
-model = build_model(y)
-model.fit(X_train, y_train)
-pred = model.predict(X_test)</code></pre>
-  </div>
-  <div class="notes"><span class="notes-label">احفظ</span><div>ما تعتمد على عدد القيم Unique لوحده؛ اقرأ وصف السؤال. لو قال «price / sin / continuous» → SVR.</div></div>
-</article>
-
 </section>
 
+<!-- ══════════ اشرح هالكود ══════════ -->
+<section class="topic" id="code-qa">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠٤</div>
+      <div><p class="kicker">سطر سطر للفهم — بدون تأليف كود</p><h2>«اشرح هالكود» — الأسئلة المرجّحة</h2></div>
+    </div>
+    <p class="topic-intro">لو الامتحان عطاك قطعة كود وطلب شرحها، هاي هي الشروحات اللي بدك تحكيها — كلمة بكلمة:</p>
 
-<section class="topic" id="ready">
-  <div class="section-head">
-    <div class="section-num">05</div>
-    <div>
-      <p class="kicker">انسخ → بدّل → نفّذ</p>
-      <h2>كود جاهز للامتحان</h2>
+    <div class="code-qa">
+      <pre><code>X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)</code></pre>
+      <div class="explain"><span class="tag">التقسيم</span><br><b>شو هاي؟</b> بنقسم البيانات 80% تدريب و20% اختبار. <code>random_state=42</code> بيثبّت العشوائية حتى كل تشغيل يعطي نفس التقسيم (قابلية التكرار). <b>ليش قبل كل إشي؟</b> عشان التيست يفضل «مخفي» عن التدريب والقياس يكون عادل.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)</code></pre>
+      <div class="explain"><span class="tag">Scaling بدون تسريب</span><br><b>شو الفرق بين السطرين؟</b> <code>fit_transform</code> على التدريب = <b>تعلم</b> المتوسط والانحراف <b>وطبّق</b> عليه. <code>transform</code> على الاختبار = طبّق <b>نفس</b> الأرقام اللي تعلمها من التدريب بدون ما تتعلم شي من التيست. <b>الخطأ القاتل:</b> <code>fit_transform</code> على التيست = تسريب معلومات (data leakage).</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>early = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+model.fit(X_train, y_train, validation_split=0.2, callbacks=[early], epochs=100)</code></pre>
+      <div class="explain"><span class="tag">Early Stopping</span><br><b>شو بيعمل؟</b> fit بيفرز 20% للمراقبة. بعد كل epoch بيراقب <code>val_loss</code>؛ لو ما تحسّن 5 epochs متتالية → التدريب بوقف ويستعيد أفضل أوزان. <b>ليش مفيد؟</b> يمنع overfitting ويوفّر وقت — وبيقصّر 100 epoch لفعلًا لـ 7–30 حسب البيانات.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>if hasattr(optimizer, "pre_update_params"):
+    optimizer.pre_update_params()
+optimizer.update_params(dense1)
+optimizer.update_params(dense2)
+if hasattr(optimizer, "post_update_params"):
+    optimizer.post_update_params()</code></pre>
+      <div class="explain"><span class="tag">حلقة الـ Optimizer</span><br><b>شو الترتيب؟</b> <code>pre</code> مرة وحدة (حساب decay) → <code>update_params</code> لكل طبقة (dense1 ثم dense2) → <code>post</code> مرة وحدة (iterations + 1). <b>ليش <code>hasattr</code>؟</b> لأن SGD العادي ما عنده pre/post، فنحمي الكود لو بدّلنا الـ optimizer بسطر واحد.</div>
     </div>
   </div>
-  
-<div class="callout">
-  <b>لو جاك السؤال فجأة:</b> انسخ القالب، بدّل اسم ملف البيانات واسم عمود الهدف، وبعدين اختار <code>SVC</code> أو <code>SVR</code>. للـ Optimization بدّل سطر <code>optimizer = ...</code> فقط. كل القوالب كمان موجودة بملف <a href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/exam_templates.py" target="_blank" rel="noopener"><code>exam_templates.py</code></a>.
-</div>
-<div class="ready-grid">
-  <div class="ready-card"><span class="step-tag">قالب A</span><h3>مسألة SVM / SVC / SVR</h3><ul><li><code>train_test_split</code></li><li><code>StandardScaler</code></li><li><code>SVC(...)</code> أو <code>SVR(...)</code></li><li><code>fit → predict → metric</code></li></ul><a class="btn tiny" href="#pipeline-card">افتح القالب</a></div>
-  <div class="ready-card"><span class="step-tag">قالب B</span><h3>مسألة Optimizer</h3><ul><li>الإطار المشترك</li><li>كلاس الـ optimizer المطلوب</li><li><code>pre → update → post</code></li><li>Loss / Accuracy</li></ul><a class="btn tiny" href="#nnfs-frame-card">افتح الإطار</a></div>
-  <div class="ready-card"><span class="step-tag">قالب C</span><h3>مسألة Regularization</h3><ul><li>Keras + <code>EarlyStopping</code></li><li>أو PyTorch + <code>Dropout</code></li><li>أو <code>BatchNormalization</code></li><li>validation + eval + تفسير المنحنى</li></ul><a class="btn tiny" href="#early-card">افتح الأمثلة</a></div>
-</div>
-
 </section>
 
-
+<!-- ══════════ الكويز ══════════ -->
 <section class="topic" id="quiz">
-  <div class="section-head">
-    <div class="section-num">06</div>
-    <div>
-      <p class="kicker">أسئلة اختيار مع شرح</p>
-      <h2>تدريب سريع</h2>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠٥</div>
+      <div><p class="kicker">٢٠ سؤال اختياري مع شرح</p><h2>حل الكويز واكتشف جاهزيتك</h2></div>
     </div>
+    <div class="quiz-top">
+      <div><b>اختار جواب لكل سؤال ثم اضغط «صحّح»</b><p>النتيجة بتطلع فورًا ومعها شرح كل سؤال. الأسئلة مبنية على نمط «اشرح / مين بيعمل X؟».</p></div>
+      <div class="quiz-actions"><button type="button" class="btn primary" id="quiz-submit">صحّح</button><button type="button" class="btn" id="quiz-reset">إعادة</button></div>
+    </div>
+    <div id="quiz-result" class="quiz-result" role="status" aria-live="polite"></div>
+    <div id="quiz-list" class="quiz-list"></div>
   </div>
-  
-<div class="quiz-top noprint">
-  <div><h3>١٢ سؤال سريع</h3><p>جاوب وبعدين اضغط «صحّح». الشرح بيطلع تحت كل سؤال.</p></div>
-  <div class="quiz-actions"><button type="button" class="btn primary" id="quiz-submit">صحّح</button><button type="button" class="btn" id="quiz-reset">إعادة</button></div>
-</div>
-<div id="quiz-result" class="quiz-result" aria-live="polite"></div>
-<div id="quiz-list" class="quiz-list"></div>
-
 </section>
 
-
+<!-- ══════════ Checklist ══════════ -->
 <section class="topic" id="checklist">
-  <div class="section-head">
-    <div class="section-num">07</div>
-    <div>
-      <p class="kicker">Checklist محفوظة بالمتصفح</p>
-      <h2>قبل ما تسلّم</h2>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠٦</div>
+      <div><p class="kicker">Checklist محفوظة بالمتصفح</p><h2>جاهزيتك قبل تسليم الشرح</h2></div>
     </div>
+    <div class="check-head">
+      <div><b>أقدر أشرح كل واحدة بصوتي بدون النظر؟</b><p>العلامات بتنحفظ بالمتصفح — ارجعها قبل ما تنامي الليلة.</p></div>
+      <div class="progress-box"><div class="progress-track"><div id="progress-bar"></div></div><span id="progress-text">0 / 0</span></div>
+    </div>
+    <div class="checklist" id="checklist-items"></div>
   </div>
-  
-<div class="check-head">
-  <div><h3> Checklist قبل ما تسلّم</h3><p>العلامات بتنحفظ بالمتصفح، فتقدر ترجعلها قبل الامتحان.</p></div>
-  <div class="progress-box"><div class="progress-track"><div id="progress-bar"></div></div><strong id="progress-text">0 / 0</strong></div>
-</div>
-<div class="checklist" id="checklist"><label class="check-item"><input type="checkbox" data-check="0"><span>قرأت السؤال وميّزت: تصنيف SVC ولا انحدار SVR؟</span></label>
-<label class="check-item"><input type="checkbox" data-check="1"><span>كتبت كل الـ imports قبل ما أبدأ (sklearn / tf / torch / nnfs).</span></label>
-<label class="check-item"><input type="checkbox" data-check="2"><span>قسمت البيانات بـ train_test_split قبل الـ scaling.</span></label>
-<label class="check-item"><input type="checkbox" data-check="3"><span>استعملت fit_transform على X_train و transform فقط على X_test.</span></label>
-<label class="check-item"><input type="checkbox" data-check="4"><span> SVC/SVR: اخترت kernel و C و gamma بشكل مقصود.</span></label>
-<label class="check-item"><input type="checkbox" data-check="5"><span> SVR: انتبهت لـ epsilon ولـ degree/coef0 لو kernel=&#x27;poly&#x27;.</span></label>
-<label class="check-item"><input type="checkbox" data-check="6"><span>قِست التصنيف بـ accuracy_score / classification_report.</span></label>
-<label class="check-item"><input type="checkbox" data-check="7"><span>قِست الانحدار بـ mean_squared_error / r2_score.</span></label>
-<label class="check-item"><input type="checkbox" data-check="8"><span> GridSearchCV: طبّعت best_params_ و best_score_.</span></label>
-<label class="check-item"><input type="checkbox" data-check="9"><span> Optimization: حدّثت weights و biases مع بعض.</span></label>
-<label class="check-item"><input type="checkbox" data-check="10"><span> Optimization: حطّيت epsilon بالقاسم و bias correction لـ Adam.</span></label>
-<label class="check-item"><input type="checkbox" data-check="11"><span> Regularization: كتبت callbacks=[early_stopping] و validation_split.</span></label>
-<label class="check-item"><input type="checkbox" data-check="12"><span> Dropout: حطّيت model.eval() وقت الـ validation/test.</span></label>
-<label class="check-item"><input type="checkbox" data-check="13"><span> Figure out: فسّرت النتيجة مو بس طبعتها (overfit؟ margin؟ val_loss؟).</span></label></div>
-
 </section>
 
-
+<!-- ══════════ المصادر ══════════ -->
 <section class="topic" id="sources">
-  <div class="section-head">
-    <div class="section-num">08</div>
-    <div>
-      <p class="kicker">Original .py files</p>
-      <h2>المصادر</h2>
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠٧</div>
+      <div><p class="kicker">Original .py files</p><h2>المصادر — أكواد المحاضرات الأصلية</h2></div>
     </div>
+    <div class="golden"><b>المصدر:</b> أكواد الـ ZIP المرفقة بالريبو. نسخها الأصلية موجودة تحت <code>study/sources/</code> بالفرع الحالي، وكل رابط بيفتح الملف الأصلي مباشرة. والقوالب الجاهزة بملف <a href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/exam_templates.py" target="_blank" rel="noopener"><code>exam_templates.py</code></a>.</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>الـ ZIP الأصلي</th><th>الملف داخل الـ ZIP</th><th>النسخة على GitHub</th><th>الموضوع</th></tr></thead>
+        <tbody id="sources-body"></tbody>
+      </table>
+    </div>
+    <p class="footnote">هالمراجعة ركّزت على أكواد المحاضرات ٣ (Optimization) و ٤ (SVM) و ٥ (Regularization) حسب طلبك — الشرح فوق مبني على نفس المحاضرات.</p>
   </div>
-  
-<div class="callout">
-  <b>المصدر:</b> أكواد ZIP الأصلية اللي بالريبو. نسخها الكاملة موجودة تحت <code>study/sources/</code> بالفرع الحالي على GitHub، وكل رابط بالجدول بيفتح الملف الأصلي مباشرة.
-</div>
-<div class="table-wrap">
-  <table class="compare sources">
-    <thead><tr><th>الـ ZIP الأصلي</th><th>الملف داخل الـ ZIP</th><th>النسخة هنا</th><th>الموضوع</th></tr></thead>
-    <tbody>
-      <tr><td><code>3rd_Lecture_Codes_AI_Practical.zip</code></td><td dir='ltr'><code>SGD_Stochastic_Gradient_Descent.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_SGD.py' target='_blank' rel='noopener'>Optimization_SGD.py</a></td><td>SGD عادي</td></tr>
-<tr><td><code>3rd_Lecture_Codes_AI_Practical.zip</code></td><td dir='ltr'><code>SGD_with_Momentum.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_SGD_Momentum.py' target='_blank' rel='noopener'>Optimization_SGD_Momentum.py</a></td><td>Momentum + decay</td></tr>
-<tr><td><code>3rd_Lecture_Codes_AI_Practical.zip</code></td><td dir='ltr'><code>Adaptive_Gradient.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_AdaGrad.py' target='_blank' rel='noopener'>Optimization_AdaGrad.py</a></td><td>AdaGrad</td></tr>
-<tr><td><code>3rd_Lecture_Codes_AI_Practical.zip</code></td><td dir='ltr'><code>Opt_RMS.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_RMSprop.py' target='_blank' rel='noopener'>Optimization_RMSprop.py</a></td><td>RMSprop</td></tr>
-<tr><td><code>3rd_Lecture_Codes_AI_Practical.zip</code></td><td dir='ltr'><code>Opt_Adam.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Optimization_Adam.py' target='_blank' rel='noopener'>Optimization_Adam.py</a></td><td>Adam</td></tr>
-<tr><td><code>5th_Lecture_Codes.zip</code></td><td dir='ltr'><code>Batch_Normalization.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Regularization_BatchNorm.py' target='_blank' rel='noopener'>Regularization_BatchNorm.py</a></td><td>Batch Normalization</td></tr>
-<tr><td><code>5th_Lecture_Codes.zip</code></td><td dir='ltr'><code>Dropout.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Regularization_Dropout.py' target='_blank' rel='noopener'>Regularization_Dropout.py</a></td><td>Dropout</td></tr>
-<tr><td><code>5th_Lecture_Codes.zip</code></td><td dir='ltr'><code>Early_Stopping_Regularization.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/Regularization_EarlyStopping.py' target='_blank' rel='noopener'>Regularization_EarlyStopping.py</a></td><td>Early Stopping</td></tr>
-<tr><td><code>AI_Lectture_4.zip</code></td><td dir='ltr'><code>RBF_SVM Param.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/SVM_RBF_Params.py' target='_blank' rel='noopener'>SVM_RBF_Params.py</a></td><td>C / gamma + GridSearchCV</td></tr>
-<tr><td><code>AI_Lectture_4.zip</code></td><td dir='ltr'><code>SVM2.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/SVM_SVC_BreastCancer.py' target='_blank' rel='noopener'>SVM_SVC_BreastCancer.py</a></td><td>SVC + تقييم + حدّ القرار</td></tr>
-<tr><td><code>AI_Lectture_4.zip</code></td><td dir='ltr'><code>SVR.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/SVM_SVR.py' target='_blank' rel='noopener'>SVM_SVR.py</a></td><td>SVR بثلاث kernels</td></tr>
-<tr><td><code>AI_Lectture_4.zip</code></td><td dir='ltr'><code>svm.py</code></td><td><a href='https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/SVM_SVC_Pulsar.py' target='_blank' rel='noopener'>SVM_SVC_Pulsar.py</a></td><td>CSV + SVC + مقارنة kernels</td></tr>
-    </tbody>
-  </table>
-</div>
-<p class="footnote">الـ PDF-ات <code>practical.pdf</code> و <code>practical2-pdf.pdf</code> شرحوا أساسيات الـ Perceptron / Layer_Dense / Loss / أول فكرة optimization عشوائي؛ هالمراجعة ركّزت على أكواد المحاضرات ٣ و ٤ و ٥ حسب طلبك.</p>
-
 </section>
 
-  <footer class="footer">مبنية من ملفات المحاضرة الموجودة بالريبو · كل الكود بدون مكتبات خارجية للصفحة · بالتوفيق بالامتحان ✦</footer>
+<footer class="footer">مبنية من أكواد المحاضرات الموجودة بالريبو · الصفحة بدون مكتبات خارجية · بالتوفيق بالامتحان ✦</footer>
 </main>
+
+<button id="top-btn" type="button" aria-label="العودة لأعلى الصفحة" title="العودة للأعلى">↑</button>
+
 <script>
-const QUIZ = [{"q": "عندك y فيه قيم 0/1 وعليك تتوقع الصنف. أي موديل تختار؟", "options": ["SVR", "SVC", "Optimizer_Adam", "EarlyStopping"], "answer": 1, "why": "SVC = Support Vector Classification. SVR للانحدار لمّا y رقم مستمر."}, {"q": "لماذا نستعمل StandardScaler قبل SVC/SVR؟", "options": ["ليزيد عدد الأعمدة", "لأن الـ kernel والمسافات تتأثر بمقياس الميزات", "لأنه يحوّل y إلى one-hot", "لأنه يلغي الحاجة لـ train_test_split"], "answer": 1, "why": "RBF وغيره يعتمد على المسافات؛ لو ميزة واحدة بمقياس كبير بتسيطر على الحساب."}, {"q": "السطر الصح للتيست بعد ما درّبت الـ scaler على الترين؟", "options": ["X_test = scaler.fit_transform(X_test)", "X_test = scaler.transform(X_test)", "X_test = scaler.fit(X_test)", "ما في داعي للـ transform"], "answer": 1, "why": "fit_transform على الترين فقط. على التيست نطبّق نفس المتوسط والانحراف بـ transform."}, {"q": "زيادة gamma في SVC مع RBF ماذا تعمل غالباً؟", "options": ["حدّ قرار أنعم وأبسط", "حدّ قرار أكثر التواءً وخطر overfitting أعلى", "تغيّر عدد الطبقات", "توقف التدريب مبكراً"], "answer": 1, "why": "gamma كبير = تأثير كل نقطة أقرب وأضيق = boundary أدق وأكثر تعقيداً."}, {"q": "C كبير جداً في SVC يعني…", "options": ["تنظيم أقوى و margin أوسع", "تنظيم أضعف، margin أضيق، والموديل يحاول يصحّح كل عيّنات الترين", "learning rate أعلى", "عدد support vectors صفر"], "answer": 1, "why": "C يعاقب أخطاء الـ margin؛ كل ما كبر قلّت tolerance وقلّ التنظيم فعلياً."}, {"q": "ما معنى epsilon في SVR؟", "options": ["معدّل التعلّم", "عرض أنبوب عدم الحساسية حول المنحنى", "عدد الـ epochs", "درجة كثير الحدود"], "answer": 1, "why": "ε-insensitive tube: أخطاء داخل الأنبوب ما بتنحسب بالـ loss."}, {"q": "في PyTorch مع Dropout، شو لازم قبل الـ validation؟", "options": ["model.train()", "model.eval()", "optimizer.step()", "loss.backward()"], "answer": 1, "why": "model.eval() يطفئ Dropout ويجمّد سلوك BatchNorm؛ ومعها غالباً torch.no_grad()."}, {"q": "EarlyStopping(monitor='val_loss') يحتاج…", "options": ["validation_split أو validation_data داخل fit", "SVR بدل SVC", "np.logspace", "model.support_vectors_"], "answer": 0, "why": "بدون بيانات validation ما رح يكون عندك val_loss أصلاً."}, {"q": "أي سطر يميّز AdaGrad عن RMSprop؟", "options": ["cache += dW**2", "cache = rho*cache + (1-rho)*dW**2", "m_hat = m / (1-beta_1**step)", "weight_updates = momentum*v - lr*dW"], "answer": 0, "why": "AdaGrad يجمع مربّعات التدرّجات تراكمياً؛ RMSprop يستعمل متوسطاً أُسّياً. الخيار الثالث Adam."}, {"q": "ترتيب استدعاء الـ optimizer في حلقة التدريب؟", "options": ["post → update → pre", "update → pre → post", "pre → update_params لكل طبقة → post", "pre → post → update"], "answer": 2, "why": "pre مرة واحدة قبل تحديث الطبقات، ثم update لكل طبقة، ثم post مرة واحدة لزيادة iterations."}, {"q": "GridSearchCV بعد التدريب، وين أفضل نتيجة؟", "options": ["grid.best_score_ و grid.best_params_", "grid.support_", "grid.epsilon", "grid.current_learning_rate"], "answer": 0, "why": "best_params_ يعطي أفضل C/gamma، و best_score_ درجة الـ CV، و best_estimator_ الموديل نفسه."}, {"q": "BatchNormalization في كود المحاضرة جاي…", "options": ["بعد softmax", "بين Dense(64) و Activation('relu')", "داخل optimizer", "بدل train_test_split"], "answer": 1, "why": "الكود: Dense(64) → BatchNormalization() → Activation('relu') → Dense(10, softmax)."}];
-const CHECK_COUNT = 14;
+/* ───────── بيانات الكويز (نمط اشرح / مين بيعمل X) ───────── */
+const QUIZ = [
+  {q:"سؤال «اشرح»: عندك y فيه قيم 0/1 وعليك تتوقع الصنف. أي موديل تختار؟", options:["SVR","SVC","Optimizer_Adam","EarlyStopping"], answer:1, why:"SVC = Support Vector Classification للتصنيف؛ SVR للأرقام المستمرة."},
+  {q:"ليش نستعمل StandardScaler قبل SVC/SVR؟", options:["ليزيد عدد الأعمدة","لأن الـ kernel والمسافات تتأثر بمقياس الميزات","لأنه يحوّل y إلى one-hot","لأنه يلغي الحاجة لـ train_test_split"], answer:1, why:"RBF وغيره يعتمد على المسافات؛ ميزة واحدة بمقياس كبير بتسيطر."},
+  {q:"after training the scaler on train data، السطر الصح للتيست؟", options:["X_test = scaler.fit_transform(X_test)","X_test = scaler.transform(X_test)","X_test = scaler.fit(X_test)","ما في داعي للـ transform"], answer:1, why:"fit_transform على الترين فقط؛ transform يطبّق نفس الأرقام."},
+  {q:"زيادة gamma في SVC مع RBF غالباً تعمل…", options:["حدّ قرار أنعم وأبسط","حدّ قرار أكثر التواءً وخطر overfitting أعلى","تغيّر عدد الطبقات","توقف التدريب مبكراً"], answer:1, why:"gamma كبير = تأثير محلي ضيق = boundary معقّد يلحس النقاط."},
+  {q:"C كبير جداً في SVC يعني…", options:["تنظيم أقوى و margin أوسع","تنظيم أضعف، margin أضيق، والموديل يطيحاول يرضي كل عينات الترين","learning rate أعلى","عدد support vectors صفر"], answer:1, why:"C يعاقب خرق الهامش؛ كل ما كبر قلّت التساهلات."},
+  {q:"ما معنى epsilon في SVR؟", options:["معدّل التعلّم","نصف عرض أنبوب عدم الحساسية حول الخط","عدد الـ epochs","درجة كثير الحدود"], answer:1, why:"الأنبوب ε-insensitive: الأخطاء داخله ما بتنحسب."},
+  {q:"في PyTorch مع Dropout، شو لازم قبل الـ validation؟", options:["model.train()","model.eval()","optimizer.step()","loss.backward()"], answer:1, why:"model.eval() يطفئ Dropout ويجمّد BatchNorm؛ ومعها torch.no_grad()."},
+  {q:"EarlyStopping(monitor='val_loss') يحتاج…", options:["validation_split أو validation_data داخل fit","SVR بدل SVC","np.logspace","model.support_vectors_"], answer:0, why:"بدون بيانات validation ما رح يكون في val_loss أصلاً."},
+  {q:"أي سطر يميّز AdaGrad عن RMSprop؟", options:["cache += dW**2","cache = rho*cache + (1-rho)*dW**2","m_hat = m / (1-beta_1**step)","weight_updates = momentum*v - lr*dW"], answer:0, why:"AdaGrad يجمع تراكمياً؛ RMSprop متوسط أُسّي. الثالث Adam."},
+  {q:"ترتيب استدعاء الـ optimizer في حلقة التدريب؟", options:["post → update → pre","update → pre → post","pre → update_params لكل طبقة → post","pre → post → update"], answer:2, why:"pre مرة وحدة، ثم update لكل طبقة، ثم post لزيادة iterations."},
+  {q:"GridSearchCV بعد التدريب، وين أفضل نتيجة؟", options:["grid.best_params_ و grid.best_score_","grid.support_","grid.epsilon","grid.current_learning_rate"], answer:0, why:"best_params_ أفضل C/gamma؛ best_score_ درجة الـ CV؛ best_estimator_ الموديل."},
+  {q:"BatchNormalization في كود المحاضرة جاية…", options:["بعد softmax","بين Dense(64) و Activation('relu')","داخل optimizer","بدل train_test_split"], answer:1, why:"Dense(64) → BatchNormalization() → Activation('relu')."},
+  {q:"اشرح بجملة: متى نقول إن الموديل حصله overfitting؟", options:["لما الدقة عالترين وعلى التيست اثنين واطيين","لما الدقة على الترين عالية وعلى التيست واطية لأن الموديل حفظ البيانات","لما التدريب يوقف بسرعة","لما الـ loss ثابت من أول epoch"], answer:1, why:"الحفظ الأعمى = gap كبير بين train و test."},
+  {q:"أيّ فرق أساسي بين L1 و L2؟", options:["L2 أسرع حسابيًا","L1 تصفّر أوزانًا كاملة و L2 تصغّر فقط بدون تصفير","L1 للانحدار و L2 للتصنيف","لا فرق عمليًا"], answer:1, why:"L1 عقوبة Σ|W| → sparsity؛ L2 عقوبة ΣW² → تصغير سلس."},
+  {q:"Adam بيساوي…", options:["SGD مع lr decay بس","Momentum + RMSprop + bias correction","AdaGrad + L2 regularization","RMSprop بدون epsilon"], answer:1, why:"m̂ و v̂ مع تصحيح (1−βᵗ) بالمقام؛ أشهر optimizer افتراضي."},
+  {q:"ما وظيفة momentum بالضبط؟", options:["تصغير الـ learning rate مع الزمن","تخزين «دفعة» التحديثات السابقة لتسريع الاتجاه الثابت وتهدئة التذبذب","تصفير الأوزان الصغيرة","منع القسمة على صفر"], answer:1, why:"v = m*v − lr*dW ثم W += v — كرة ثلج."},
+  {q:"جملة صحيحة عن الـ Support Vectors: …", options:["كل نقاط التدريب تحدد الحد","النقاط الأبعد عن الحد تحدده","النقاط الأقرب للحد (على الهامش) وهي الوحيدة المسؤولة عن تحديده","الـ support vectors هي الـ outliers فقط"], answer:2, why:"حذف أي نقطة غيرها ما بيغيّر الحد."},
+  {q:"لو البيانات بتتنفصل بخط مستقيم، أنسب kernel؟", options:["rbf","poly","linear","sigmoid"], answer:2, why:"linear أبسط وأسرع كفاية؛ rbf ما رح يفيد لو الأصل خطي."},
+  {q:"restore_best_weights=True في EarlyStopping تعني…", options:["حفظ آخر epoch دائمًا","الرجوع لأوزان أفضل epoch (أقل val_loss) عند التوقف","حذف الأوزان السيئة من الكاش","إعادة التدريب من الصفر"], answer:1, why:"بدونها رح تطلع عندك أوزان آخر epoch مو أفضل واحد."},
+  {q:"LR decay بيعمل…", options:["تكبير الـ learning rate مع الزمن للتسريع","تصغير الـ learning rate مع الزمن لخطوات أدق قرب الحل","تصفير الـ gradients","زيادة الـ batch size"], answer:1, why:"lr_t = lr₀ / (1 + decay·iterations) — بداية سريعة ونهاية دقيقة."}
+];
+
+const CHECKLIST = [
+  "بقدر أشرح SGD والـ learning rate بثلاث جمل بدون النظر.",
+  "بقدر أفرّق بين AdaGrad (cache += dW²) و RMSprop (متوسط أُسّي).",
+  "بقدر أشرح Adam: Momentum + RMSprop + bias correction.",
+  "بقدر أحكي ليش hasattr(…pre/post_update_params) موجودة.",
+  "بقدر أشرح overfitting والمشكلة اللي كل أداة regularization بتحلها.",
+  "بقدر أفرّق L1 (تصفّر أوزان) و L2 (تصغّر فقط).",
+  "بقدر أشرح Dropout ولييش model.eval() قبل التقييم.",
+  "بقدر أشرح EarlyStopping + ليش validation_split إجبارية.",
+  "بقدر أشرح BatchNorm: Dense → BatchNormalization → Activation.",
+  "بقدر أشرح فكرة SVM والـ margin والـ support vectors.",
+  "بقدر أفرّق SVC (فئوي) و SVR (رقمي مستمر) وليه.",
+  "بقدر أحكي تأثير C و gamma و epsilon بدون تردد.",
+  "بقدر أشرح ليش StandardScaler + الفرق fit_transform / transform.",
+  "بقدر أشرح GridSearchCV وين best_params_ و best_score_."
+];
+
+const SOURCES = [
+  ["3rd_Lecture_Codes_AI_Practical.zip","SGD_Stochastic_Gradient_Descent.py","Optimization_SGD.py","SGD عادي"],
+  ["3rd_Lecture_Codes_AI_Practical.zip","SGD_with_Momentum.py","Optimization_SGD_Momentum.py","Momentum + decay"],
+  ["3rd_Lecture_Codes_AI_Practical.zip","Adaptive_Gradient.py","Optimization_AdaGrad.py","AdaGrad"],
+  ["3rd_Lecture_Codes_AI_Practical.zip","Opt_RMS.py","Optimization_RMSprop.py","RMSprop"],
+  ["3rd_Lecture_Codes_AI_Practical.zip","Opt_Adam.py","Optimization_Adam.py","Adam"],
+  ["5th_Lecture_Codes.zip","Batch_Normalization.py","Regularization_BatchNorm.py","Batch Normalization"],
+  ["5th_Lecture_Codes.zip","Dropout.py","Regularization_Dropout.py","Dropout"],
+  ["5th_Lecture_Codes.zip","Early_Stopping_Regularization.py","Regularization_EarlyStopping.py","Early Stopping"],
+  ["AI_Lectture_4.zip","RBF_SVM Param.py","SVM_RBF_Params.py","C / gamma + GridSearchCV"],
+  ["AI_Lectture_4.zip","SVM2.py","SVM_SVC_BreastCancer.py","SVC + تقييم + حدّ القرار"],
+  ["AI_Lectture_4.zip","SVR.py","SVM_SVR.py","SVR بثلاث kernels"],
+  ["AI_Lectture_4.zip","svm.py","SVM_SVC_Pulsar.py","CSV + SVC + مقارنة kernels"]
+];
+const RAW = "https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/sources/";
 
 function esc(s){return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-const KEYWORDS = new Set(['import','from','as','class','def','return','for','in','if','else','elif','not','and','or','with','lambda','True','False','None','self','super','range','print','len','np','torch','tf','plt','pd','is','hasattr','mean','argmax','max','sum','sqrt','exp','clip','log','zeros_like','copy','reshape','astype','ravel','sort','rand','randn','sin','unique','all','int','float','str','dict','enumerate','zip','range','step','fit','predict','score','compile','evaluate','forward','backward','update_params','pre_update_params','post_update_params','train','eval','zero_grad','item','no_grad','load_data','train_test_split','accuracy_score','classification_report','mean_squared_error','r2_score','make_pipeline','fit_transform','transform','setdiff1d','arange','meshgrid','contourf','scatter','show','logspace','support_','best_params_','best_score_']);
-const FUNCS = new Set(['SVC','SVR','StandardScaler','GridSearchCV','StratifiedShuffleSplit','EarlyStopping','Dropout','BatchNormalization','Conv2d','MaxPool2d','Linear','CrossEntropyLoss','SGD','Adam','Adagrad','RMSprop','Sequential','Dense','Flatten','Input','Activation','ToTensor','Normalize','Compose','DataLoader','random_split','load_breast_cancer','load_iris','spiral_data','np','torch','tf','optim','nn','model','optimizer','scaler','clf','grid','history']);
-function highlightPython(el){
-  if(el.dataset.raw) return;
-  const src = el.textContent;
-  el.dataset.raw = src;
-  const re = /("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|#.*$|\b\d+(?:\.\d+)?(?:e[-+]?\d+)?\b|\b[A-Za-z_][A-Za-z0-9_]*\b)/gm;
-  let out = '', last = 0, m;
-  while((m = re.exec(src)) !== null){
-    out += esc(src.slice(last, m.index));
-    const t = m[0];
-    let cls = '';
-    if(t.startsWith('#')) cls = 'c';
-    else if(t[0] === '"' || t[0] === "'") cls = 's';
-    else if(/^\d/.test(t)) cls = 'n';
-    else if(KEYWORDS.has(t)) cls = 'k';
-    else if(FUNCS.has(t)) cls = 'f';
-    out += cls ? '<span class="tok-'+cls+'">'+esc(t)+'</span>' : esc(t);
-    last = re.lastIndex;
-  }
-  out += esc(src.slice(last));
-  el.innerHTML = out;
+
+/* ───────── بناء جدول المصادر ───────── */
+document.getElementById('sources-body').innerHTML = SOURCES.map(([zip, orig, copy, topic]) =>
+  '<tr><td><code>'+esc(zip)+'</code></td><td dir="ltr"><code>'+esc(orig)+'</code></td>' +
+  '<td><a href="'+RAW+copy+'" target="_blank" rel="noopener">'+esc(copy)+'</a></td><td>'+esc(topic)+'</td></tr>'
+).join('');
+
+/* ───────── بناء الـ checklist + حفظها ───────── */
+const CHECK_KEY = 'examChecklist-v2';
+const checklist = document.getElementById('checklist-items');
+checklist.innerHTML = CHECKLIST.map((t, i) =>
+  '<label class="check-item"><input type="checkbox" data-check="'+i+'"><span>'+esc(t)+'</span></label>'
+).join('');
+const checks = [...checklist.querySelectorAll('[data-check]')];
+let saved = [];
+try { saved = JSON.parse(localStorage.getItem(CHECK_KEY) || '[]'); } catch(_){}
+function saveChecks(){
+  const values = checks.map(c => c.checked);
+  try { localStorage.setItem(CHECK_KEY, JSON.stringify(values)); } catch(_){}
+  const done = values.filter(Boolean).length;
+  document.getElementById('progress-bar').style.width = (100 * done / CHECKLIST.length) + '%';
+  document.getElementById('progress-text').textContent = done + ' / ' + CHECKLIST.length;
 }
-document.querySelectorAll('code.python').forEach(highlightPython);
+checks.forEach((c, i) => { c.checked = !!saved[i]; c.addEventListener('change', saveChecks); });
+saveChecks();
 
-document.addEventListener('click', async (e) => {
-  const btn = e.target.closest('.copy-btn');
-  if(!btn) return;
-  const el = document.getElementById('code-' + btn.dataset.copy);
-  const text = el ? (el.dataset.raw || el.textContent) : '';
-  try { await navigator.clipboard.writeText(text); }
-  catch(err){
-    const ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta); ta.select();
-    try{document.execCommand('copy');}catch(_){}
-    ta.remove();
-  }
-  const old = btn.textContent; btn.textContent = 'تم ✓'; btn.classList.add('copied');
-  setTimeout(()=>{btn.textContent = old; btn.classList.remove('copied');}, 1200);
-});
-
-const search = document.getElementById('search');
-if(search){
-  search.addEventListener('input', () => {
-    const q = search.value.trim().toLocaleLowerCase('ar');
-    document.querySelectorAll('[data-search]').forEach(el => {
-      const hit = !q || el.textContent.toLocaleLowerCase('ar').includes(q);
-      el.classList.toggle('search-hidden', !hit);
-    });
-    document.querySelectorAll('section.topic').forEach(sec => {
-      const cards = sec.querySelectorAll('[data-search]');
-      if(cards.length){
-        const visible = [...cards].some(c => !c.classList.contains('search-hidden'));
-        sec.classList.toggle('search-hidden', q && !visible);
-      }
-    });
-  });
-}
-
-document.getElementById('theme-btn').addEventListener('click', () => {
-  const light = document.body.dataset.theme === 'light';
-  document.body.dataset.theme = light ? 'dark' : 'light';
-  document.getElementById('theme-btn').textContent = light ? '☾' : '☀';
-});
-document.getElementById('print-btn').addEventListener('click', () => window.print());
-document.getElementById('exam-mode').addEventListener('click', (e) => {
-  document.body.classList.toggle('exam-mode');
-  e.target.textContent = document.body.classList.contains('exam-mode') ? 'وضع الشرح' : 'وضع الحفظ';
-});
-
-const navLinks = [...document.querySelectorAll('nav.tabs a')];
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(en => {
-    if(en.isIntersecting){
-      navLinks.forEach(a => a.classList.toggle('active', a.dataset.nav === en.target.id));
-    }
-  });
-}, {rootMargin:'-100px 0px -65% 0px', threshold:0});
-document.querySelectorAll('section.topic').forEach(s => obs.observe(s));
-
+/* ───────── بناء الكويز ───────── */
 const list = document.getElementById('quiz-list');
 QUIZ.forEach((item, i) => {
   const opts = item.options.map((o, j) =>
-    '<label class="opt" data-opt="'+j+'"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+esc(o)+'</span></label>'
+    '<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+esc(o)+'</span></label>'
   ).join('');
   const card = document.createElement('div');
   card.className = 'quiz-card';
-  card.innerHTML = '<span class="q-num">سؤال '+(i+1)+'</span><h4>'+esc(item.q)+'</h4><div class="opts">'+opts+'</div><div class="explain"><b>الصح: '+esc(item.options[item.answer])+'</b><br>'+esc(item.why)+'</div>';
+  card.innerHTML = '<span class="q-num">سؤال '+(i+1)+' من '+QUIZ.length+'</span><h4>'+esc(item.q)+'</h4>' +
+    '<div class="opts">'+opts+'</div>' +
+    '<div class="explain"><b>الجواب: '+esc(item.options[item.answer])+'</b><br>'+esc(item.why)+'</div>';
   list.appendChild(card);
 });
 document.getElementById('quiz-submit').addEventListener('click', () => {
@@ -1472,8 +692,8 @@ document.getElementById('quiz-submit').addEventListener('click', () => {
     card.querySelector('.explain').classList.add('show');
     if(pick === QUIZ[i].answer) score++;
   });
-  const msg = score === QUIZ.length ? 'ممتاز! جاهز للامتحان 🎯' : score >= 9 ? 'منيح، بس راجع اللي غلط.' : 'رجّع الأقسام وركز على الشروحات الصغيرة.';
-  document.getElementById('quiz-result').textContent = 'النتيجة: '+score+' / '+QUIZ.length+' — '+msg;
+  const msg = score === QUIZ.length ? 'ممتاز! جاهز للامتحان 🎯' : score >= 15 ? 'قوي! بس راجع الأسئلة الغلط.' : score >= 10 ? 'ماشي الحال — ارجع للأقسام اللي غلطت فيها.' : 'رجّع صفحة الشرح من الأول، وحل الكويز مرة ثانية.';
+  document.getElementById('quiz-result').textContent = 'النتيجة: ' + score + ' / ' + QUIZ.length + ' — ' + msg;
 });
 document.getElementById('quiz-reset').addEventListener('click', () => {
   list.querySelectorAll('input').forEach(i => i.checked = false);
@@ -1482,18 +702,55 @@ document.getElementById('quiz-reset').addEventListener('click', () => {
   document.getElementById('quiz-result').textContent = '';
 });
 
-const checks = [...document.querySelectorAll('[data-check]')];
-let saved = [];
-try { saved = JSON.parse(localStorage.getItem('examChecklist') || '[]'); } catch(_){}
-function saveChecks(){
-  const values = checks.map(c => c.checked);
-  try { localStorage.setItem('examChecklist', JSON.stringify(values)); } catch(_){}
-  const done = values.filter(Boolean).length;
-  document.getElementById('progress-bar').style.width = (100 * done / CHECK_COUNT) + '%';
-  document.getElementById('progress-text').textContent = done + ' / ' + CHECK_COUNT;
+/* ───────── نسخ الجواب النموذجي ───────── */
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.copy-btn');
+  if(!btn) return;
+  const body = btn.closest('.qa-body');
+  const answer = body ? body.querySelector('.model-answer') : null;
+  const text = answer ? answer.innerText.replace(/^الجواب النموذجي:\s*/, '') : '';
+  try { await navigator.clipboard.writeText(text); }
+  catch(_) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(_){}
+    ta.remove();
+  }
+  const old = btn.textContent; btn.textContent = 'تم النسخ ✓';
+  setTimeout(() => { btn.textContent = old; }, 1400);
+});
+
+/* ───────── الثيم + الطباعة + العودة للأعلى + شريط التقدم ───────── */
+const themeBtn = document.getElementById('theme-btn');
+themeBtn.addEventListener('click', () => {
+  const light = document.body.dataset.theme === 'light';
+  document.body.dataset.theme = light ? 'dark' : 'light';
+  themeBtn.textContent = light ? '☀' : '☾';
+});
+document.getElementById('print-btn').addEventListener('click', () => window.print());
+
+const topBtn = document.getElementById('top-btn');
+const progress = document.getElementById('scroll-progress');
+function onScroll(){
+  const doc = document.documentElement;
+  const max = doc.scrollHeight - doc.clientHeight;
+  progress.style.width = (max > 0 ? (doc.scrollTop / max) * 100 : 0) + '%';
+  topBtn.classList.toggle('show', doc.scrollTop > 420);
 }
-checks.forEach((c, i) => { c.checked = !!saved[i]; c.addEventListener('change', saveChecks); });
-saveChecks();
+topBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+document.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+/* ───────── تفعيل رابط التنقل النشط ───────── */
+const navLinks = [...document.querySelectorAll('.tabs a')];
+if('IntersectionObserver' in window){
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if(en.isIntersecting) navLinks.forEach(a => a.classList.toggle('active', a.dataset.nav === en.target.id));
+    });
+  }, {rootMargin:'-110px 0px -62% 0px', threshold:0});
+  document.querySelectorAll('section.topic, section.hero').forEach(s => navObs.observe(s));
+}
 </script>
 </body>
 </html>
