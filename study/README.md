@@ -20,7 +20,7 @@ python3 -m http.server 4173 --bind 0.0.0.0 --directory study
 
 ## النشر على Vercel
 
-النسخة المنشورة static bundle فيها `index.html` + `exam_templates.py` + `README.md` + `vercel.json`. روابط «الأصل .py» بالصفحة تشير إلى `study/sources/` على فرع GitHub الحالي، فما في حاجة لرفع ملفات الـ sources مع الـ deployment نفسه. إعداد المشروع: `framework = null` و `rootDirectory = study`، والـ deployment target = production.
+النسخة المنشورة static bundle فيها `index.html` + `vercel.json` فقط. روابط «الأصل .py» و`exam_templates.py` بالصفحة تشير إلى فرع GitHub الحالي، فما في حاجة لرفع ملفات الـ sources مع الـ deployment نفسه. إعداد المشروع: `framework = null`، والـ deployment target = production مع `projectSettings.framework = null`.
 
 ## الملفات
 

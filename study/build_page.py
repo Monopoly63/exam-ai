@@ -14,6 +14,10 @@ GITHUB_SOURCE_BASE = (
     "https://github.com/Monopoly63/exam-ai/raw/refs/heads/"
     "arena/872c0405-exam-ai/study/sources/"
 )
+GITHUB_TEMPLATE_URL = (
+    "https://github.com/Monopoly63/exam-ai/raw/refs/heads/"
+    "arena/872c0405-exam-ai/study/exam_templates.py"
+)
 
 # ---------------------------------------------------------------------------
 # Code snippets. They are intentionally short: the exam-relevant lines only.
@@ -1058,7 +1062,7 @@ svm_body = """
 
 ready_body = """
 <div class="callout">
-  <b>لو جاك السؤال فجأة:</b> انسخ القالب، بدّل اسم ملف البيانات واسم عمود الهدف، وبعدين اختار <code>SVC</code> أو <code>SVR</code>. للـ Optimization بدّل سطر <code>optimizer = ...</code> فقط. كل القوالب كمان موجودة بملف <a href="exam_templates.py" download><code>exam_templates.py</code></a>.
+  <b>لو جاك السؤال فجأة:</b> انسخ القالب، بدّل اسم ملف البيانات واسم عمود الهدف، وبعدين اختار <code>SVC</code> أو <code>SVR</code>. للـ Optimization بدّل سطر <code>optimizer = ...</code> فقط. كل القوالب كمان موجودة بملف <a href="__TEMPLATE_URL__" target="_blank" rel="noopener"><code>exam_templates.py</code></a>.
 </div>
 <div class="ready-grid">
   <div class="ready-card"><span class="step-tag">قالب A</span><h3>مسألة SVM / SVC / SVR</h3><ul><li><code>train_test_split</code></li><li><code>StandardScaler</code></li><li><code>SVC(...)</code> أو <code>SVR(...)</code></li><li><code>fit → predict → metric</code></li></ul><a class="btn tiny" href="#pipeline-card">افتح القالب</a></div>
@@ -1066,6 +1070,7 @@ ready_body = """
   <div class="ready-card"><span class="step-tag">قالب C</span><h3>مسألة Regularization</h3><ul><li>Keras + <code>EarlyStopping</code></li><li>أو PyTorch + <code>Dropout</code></li><li>أو <code>BatchNormalization</code></li><li>validation + eval + تفسير المنحنى</li></ul><a class="btn tiny" href="#early-card">افتح الأمثلة</a></div>
 </div>
 """
+ready_body = ready_body.replace("__TEMPLATE_URL__", GITHUB_TEMPLATE_URL)
 
 quiz_body = """
 <div class="quiz-top noprint">
