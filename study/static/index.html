@@ -113,6 +113,14 @@ td code{white-space:nowrap}
 .formula span{display:block;color:var(--muted);font-size:.7rem;font-weight:800;margin-bottom:.3rem}
 .formula b{color:var(--teal)}
 
+/* ─── قسم النظرية ─── */
+.map-row{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin:.7rem 0 1rem}
+.map-row div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.5rem .55rem;font-size:.75rem;text-align:center;color:var(--muted)}
+.map-row b{display:block;color:var(--teal);font-size:.8rem;margin-bottom:.15rem}
+.theory-tools{display:flex;gap:.5rem;margin:.3rem 0 .8rem}
+.theory-part{margin:.9rem 0 .2rem;display:flex;align-items:center;gap:.5rem;color:var(--blue);font-weight:800;font-size:.82rem;letter-spacing:.3px;border-bottom:1px solid var(--line);padding-bottom:.35rem}
+.gloss{margin-top:.9rem}
+
 /* ─── الكويز ─── */
 .quiz-top{display:flex;justify-content:space-between;align-items:center;gap:1rem;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.8rem 1.1rem;margin-bottom:.7rem;flex-wrap:wrap}
 .quiz-top p{margin:.2rem 0 0;color:var(--muted);font-size:.85rem}
@@ -154,6 +162,7 @@ td code{white-space:nowrap}
 
 @media(max-width:860px){
   .quiz-list,.checklist,.formula{grid-template-columns:1fr}
+  .map-row{grid-template-columns:repeat(2,1fr)}
   .brand small{display:none}
 }
 @media(max-width:560px){
@@ -185,6 +194,7 @@ td code{white-space:nowrap}
     <nav class="tabs" aria-label="التنقل">
       <a href="#home" data-nav="home" class="active">الرئيسية</a>
       <a href="#how" data-nav="how">كيف تجاوب</a>
+      <a href="#theory" data-nav="theory">النظرية من الصفر</a>
       <a href="#optimization" data-nav="optimization">Optimization</a>
       <a href="#regularization" data-nav="regularization">Regularization</a>
       <a href="#svm" data-nav="svm">SVM · SVR · SVC</a>
@@ -205,15 +215,15 @@ td code{white-space:nowrap}
   <div class="container">
     <p class="eyebrow">امتحان بكرة · أسئلة «اشرح» مو «اكتب كود»</p>
     <h1>الأسئلة جاية <span class="hl">اشرح</span> —<br>فخلّينا نفهم، مش نحفظ.</h1>
-    <p class="lead">كل سؤال بالعملي هون إله <b>جواب نموذجي قصير</b>: تعريف بجملة + «ليش» + مثال من المحاضرة + فخ شائع يقع فيه الكل. افتح السؤال، اقرأ الجواب، انسخه بأسلوبك، وبعدها حل الكويز (٢٠ سؤال اختياري).</p>
+    <p class="lead">كل سؤال بالعملي هون إله <b>جواب نموذجي قصير</b>: تعريف بجملة + «ليش» + مثال من المحاضرة + فخ شائع يقع فيه الكل. افتح السؤال، اقرأ الجواب، انسخه بأسلوبك، وبعدها حل الكويز (٢٦ سؤال اختياري). <b>لو غبت عن المحاضرات؟</b> فيه قسم كامل «النظرية من الصفر» يشرح كل إشي من أول تعريف الـ loss لحد الـ kernel trick.</p>
     <div class="hero-actions">
       <a class="btn primary" href="#how">كيف تجاوب أي سؤال اشرح؟</a>
-      <a class="btn" href="#quiz">حل الكويز (٢٠ سؤال)</a>
+      <a class="btn" href="#quiz">حل الكويز (٢٦ سؤال)</a>
     </div>
     <div class="stat-row" aria-hidden="true">
       <span class="stat"><b>٣</b> مواضيع</span>
-      <span class="stat"><b>٢١</b> سؤال اشرح مع جواب</span>
-      <span class="stat"><b>٢٠</b> سؤال اختياري</span>
+      <span class="stat"><b>٤٥</b> سؤال اشرح مع جواب</span>
+      <span class="stat"><b>٢٦</b> سؤال اختياري</span>
       <span class="stat"><b>٤</b> «اشرح هالكود»</span>
     </div>
   </div>
@@ -236,11 +246,289 @@ td code{white-space:nowrap}
   </div>
 </section>
 
+<!-- ══════════ النظرية من الصفر ══════════ -->
+<section class="topic" id="theory">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠١</div>
+      <div><p class="kicker">للطلاب اللي غابوا عن المحاضرات</p><h2>النظرية من الصفر — من المشتقة للـ kernel trick</h2></div>
+    </div>
+    <p class="topic-intro">لو ما حضرت ولا محاضرة، ابدأ من هون. هي نفس المادة اللي المفروض تشرحها المحاضرة، بس مشروحة بترتيب يفهمك <b>ليش</b> — مو بس <b>شو</b>. ما في شرط رياضيات مسبقة إلا إنك تسمع كلمة «مشتقة» وتكمل.</p>
+
+    <div class="map-row" aria-label="الخريطة الذهنية الكاملة">
+      <div><b>١</b>البيانات تدخل المعادلة (forward)</div>
+      <div><b>٢</b>بطلع تنبؤ → بنحسب الخطأ (loss)</div>
+      <div><b>٣</b>بنرجع الخطأ للخلف (backward)</div>
+      <div><b>٤</b>بنعدّل الأوزان بخطوة صغيرة (update)</div>
+      <div><b>٥</b>بنكرّر حتى يتعمّم (generalize)</div>
+    </div>
+    <div class="theory-tools noprint">
+      <button type="button" class="btn" id="qa-open-all">افتح كل الشروحات</button>
+      <button type="button" class="btn" id="qa-close-all">اطوي الكل</button>
+    </div>
+
+    <p class="theory-part">أ · الأساسيات من الصفر (لللي غاب عن أول محاضرة)</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١</span>شو معنى إن النموذج «يتعلّم»؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> النموذج = <b>معادلة ببرامترات قابلة للضبط</b> (أوزان <code>W</code> وانحيازات <code>b</code>). «التعلّم» = ضبط هاي الأرقام شوي شوي على بيانات التدريب بحيث تقل أخطاء المعادلة. يعني المفروض تلاقي الذكاء مو «معرفة» بل <b>أرقام مضبوطة صح</b> — والتدريب كلو عملية تقليل خطأ.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن النموذج «يفهم» زي البشر — لا؛ هو بيوازن معادلة إحصائية حتى تطابق الأنماط.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٢</span>شو هي دالة الخسارة (Loss) وليه نحتاجها؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> Loss رقم <b>واحد</b> يلخص «قديش تنبؤاتنا غلط». للانحدار (y رقم): <code>MSE = متوسط (y − ŷ)²</code>. للتصنيف: <code>Cross-Entropy</code> بين توزيع النموذج والحقيقة. كل التدريب = تصغير هالرقم — لو ما فيه loss ما في تعلّم أصلاً.</p>
+        <p class="trap"><b>فخ شائع:</b> تخلط بين الاثنين: <b>MSE للأرقام المستمرة، Cross-Entropy للفئات</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٣</span>شو يعني «مشتقة» و «gradient» ببساطة؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> المشتقة = <b>ميل (انحدار) دالة الخسارة تجاه وزن معيّن</b>: «لو حركت هالوزن للأعلى شوي، بتنزل ولا بتطلع الخسارة وقديش؟». و<b>الـ gradient</b> هو كل المشتقات مجتمعة = اتجاه <b>أقوى صعود</b> للخسارة. عشان كذا تتحرك كل الخوارزميات <b>عكس</b> هالاتجاه.</p>
+        <p class="trap"><b>فخ شائع:</b> تحكي «المشتقة هي الخطأ نفسه» — لا؛ المشتقة هي <b>منحدر</b> الخطأ، مو قيمته.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٤</span>اشرح Gradient Descent بمثال من الحياة.<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> تخيل إنك فوق جبل بضباب (الغابة ضبابية = ما شايف القاع): كل إشي تعمله هو إنك تحس بانحدار الأرض تحت قدميك <b>وتمشي عكسه خطوة صغيرة</b>، وتكرر لساعات. بالمعادلة: <code>W = W − lr · dW</code>. القاع (القيمة الصغرى للخسارة) = أفضل برامترات للنموذج — بس مو بالضرورة القاع الأفضل على الإطلاق (ممكن قاع محلي).</p>
+        <p class="trap"><b>فخ شائع:</b> تنسى الإشارة السالبة — بدونها بتمشي لأعلى الجبل (تزيد الخسارة).</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٥</span>شو الفرق بين epoch و batch و iteration؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <b>Epoch</b> = مرور واحد كامل على <b>كل</b> بيانات التدريب. <b>Batch</b> = مجموعة العينات اللي بنحسب منها التدرج قبل كل تحديث (المحاضرة بتستخدم mini-batch). <b>Iteration</b> = خطوة تحديث وحدة للأوزان. مثال: 1000 epoch مع batch=32 يعني آلاف الخطوات — مو «مية ألف» بالضرورة؛ epoch ≠ خطوة.</p>
+        <p class="trap"><b>فخ شائع:</b> تقول «epoch هو خطوة تحديث» — غلط؛ epoch مرور كامل، iteration خطوة وحدة.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٦</span>شو هو الـ forward والـ backward propagation؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <b>Forward:</b> البيانات تدخل من المدخلات وتمر عبر الطبقات (ضرب بالوزن + انحياز ثم دالة تفعيل مثل ReLU) حتى تطلع التنبؤات. <b>Backward (backpropagation):</b> نرجع من الـ loss بالعكس عبر الطبقات، و<b>بقاعدة السلسلة</b> ننسب «لوم» لكل وزن وكل انحياز — يعني بنحسب <code>dW</code> و <code>db</code> لكل طبقة. كل الموضوع تطبيقات متتابعة لقاعدة السلسلة من التفاضل.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن الـ backward «بيحذف طبقات» أو «بيشيل الـ activations» — لا؛ هو حساب مشتقات للخلف.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٧</span>شو الفرق بين التدريب والتقييم (inference)؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> بالتدريب: forward ثم backward ثم <b>تحديث الأوزان</b>. بالتقييم (validation/test): <b>forward فقط</b> — الأوزان متجمدة. وفي PyTorch لازم <code>model.eval()</code> حتى Dropout ينطفئ وBatchNorm يثبت إحصاءاته. لهذا السبب الدقة على التيست دائمًا بتطلع مختلفة عن التدريب — النظام بيشتغل بطريقتين مختلفتين.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن الأوزان بتتحدث حتى وقت التنبؤ — لا؛ لو تحدثت ما بيصير في قياس عادل.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٨</span>شو يعني الـ Learning Rate نظريًا؟ ليش له أهمية هائلة؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> lr = <b>طول الخطوة</b> بمعادلة التحديث. <b>صغير جدًا</b> = تزحلق بطيء، وقد تحتاج ملايين الخطوات. <b>كبير جدًا</b> = تخطّي القاع والتذبذب بين الجدارين، والخسارة ممكن تنفجر (<code>NaNLoss</code>). ما في قيمة سحرية — لهذا نستعمل <b>decay</b> (خطوة أصغر مع الوقت) والتجارب من المحاضرة (0.05 لـ Adam، 0.02 لـ RMSprop) نقاط بداية ممتازة.</p>
+        <p class="trap"><b>فخ شائع:</b> «lr أكبر يعني تعلم أسرع دايمًا» — غلط؛ فوق حد معين بيصير دمار.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <p class="theory-part">ب · Optimization — النظرية وراء الخمس خوارزميات</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٩</span>ليش الـ SGD «عشوائي»؟ شو الفرق بينه وبين batch gradient descent؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> batch GD يحسب التدرج على <b>كل</b> البيانات قبل كل تحديث — دقيق لكن بطيء جدًا مع ملايين العينات. <b>SGD/mini-batch</b> يستعمل دفعة صغيرة كل مرة — أسرع بمرتبة، والضوضاء الناتجة عن العشوائية <b>ميزة</b>: تساعد على الخروج من الحدود المحلية الضحلة بدل التعليق فيها. «العشوائي» يعني عينات مُعاد اختيارها كل مرة، مش فوضى عشوائية بالمعادلة.</p>
+        <p class="trap"><b>فخ شائع:</b> تحسبه «أسوئ طريقة» — عملياً mini-batch هو المعيار بكل التعلم العميق.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٠</span>اشرح Momentum فيزيائيًا — ليش بيسرّع ويخفف التذبذب؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> تخيل كرة تتدحرج بوادٍ ضيق: عندها <b>سرعة متراكمة</b>. كل خطوة جديدة = (السرعة القديمة مضروبة بـ 0.9) + (الدفع الجديد −lr·dW). لو نفس الاتجاه تكرر عدة خطوات → السرعة تكبر تلقائيًا (تسارع نحو القاع). ولو الاتجاه تذبذب (يمين-شمال) → الدفعات بتلغي بعضها والكرة تفضل ماشيه باتجاه الوادي. النتيجة: نهاية الـ zig-zag المعروف بالوادي الضيق.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن momentum «يوقف التعلم» — لا؛ هو التسارع الانسيابي للاتجاه الثابت.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١١</span>AdaGrad نظرياً — ليش لكل وزن معدل تعلم خاص فيه؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> AdaGrad بيبني لـ <b>كل وزن ذاكرة خاصة</b> (cache) يجمع فيها مربعات تدرجاته عبر الزمن. الوزن اللي شاف تدرجات ضخمة (ميزة متكررة) خطواته اللاحقة تصير أصغر تلقائيًا؛ والوزن اللي تدرجاته صغيرة بياخد خطوات أكبر. يعني <b>معدل تعلم تكيفي لكل وزن بدلاً من قيمة واحدة للكل</b> — ممتاز للبيانات المتناثرة. المشكلة: الجمع التراكمي لا يتوقف أبدًا → الخطوة توصل تقريبًا للصفر → «تجميد» مبكر.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن AdaGrad «يوقف التدريب» قصريًا — لا؛ بيتباطأ تدريجيًا حتى التوقف.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٢</span>RMSprop نظرياً — كيف التفّ على مشكلة AdaGrad؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> نفس فكرة AdaGrad (تكييف لكل وزن)، لكن بدل الذاكرة الكاملة يستعمل <b>متوسطًا أُسّيًا</b>: <code>cache = ρ·cache + (1−ρ)·dW²</code> مع <code>ρ ≈ 0.999</code>. يعني التدرجات القديمة تُنسى تدريجيًا بدل ما تتراكم للأبد — الخطوة ما بتموت والتقدم بيستمر. هذا هو «الالتفاف المباشر» على تجميد AdaGrad: نسيان بدل الجمع المطلق.</p>
+        <p class="trap"><b>فخ شائع:</b> تحسبه نفس AdaGrad «بضبط بسيط»؛ الفرق الجوهري: <b>جمع تراكمي مقابل متوسط أُسّي متناسي</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٣</span>Adam نظرياً — ليش بيشتغل صح من أول epoch؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> Adam يجمع الاثنين: <b>Momentum</b> (لحظة أولى <code>m</code> = متوسط التدرجات) و <b>RMSprop</b> (لحظة ثانية <code>v</code> = متوسط مربعات التدرجات). أول الخطوات، <code>m</code> و<code>v</code> منحازان نحو الصفر (بدؤوا من 0)، فيصححها: <code>m̂ = m/(1−β₁ᵗ)</code> و <code>v̂ = v/(1−β₂ᵗ)</code>، ثم التحديث <code>W += −lr·m̂/(√v̂ + ε)</code>. التصحيح = إزالة الانحياز الابتدائي → خطوة محسوبة صح من أول خطوة — وهذا سر شهرته.</p>
+        <p class="trap"><b>فخ شائع:</b> تحسبه «مجرد اسم»؛ لو نسيت الـ bias correction بتنسى أهم جزء نظري فيه.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <p class="theory-part">ج · Regularization — النظرية وراء «منع الحفظ»</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٤</span>اشرح الـ Bias–Variance Tradeoff — الركيزة النظرية لكل التنظيم.<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> كل نموذج عنده خطأين أساسيين: <b>Bias (انحياز)</b> = بساطة مفرطة في الفرضية → <b>underfitting</b> (خطأ منظم كبير سواء بالتدريب والاختبار). <b>Variance (تباين)</b> = حساسية مفرطة لتفاصيل التدريب → <b>overfitting</b> ( ممتاز على الترين، سيئ على الجديد). Regularization بتقلل الـ variance بكلفة زيادة bias بسيط — الهدف الحقيقي: <b>أقل خطأ كلي على بيانات ما شافها النموذج</b>، مش أعلى دقة تدريب.</p>
+        <p class="trap"><b>فخ شائع:</b> تعكس الاتجاهين — احفظ: <b>variance عالي = overfitting، bias عالي = underfitting</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٥</span>L2 رياضيًا — شو بيصير بالضبط للأوزان؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> L2 بتضيف للخسارة <code>λ·ΣW²</code>. التدرج يصير: <b>التدرج الأصلي + 2λW</b> — يعني كل وزن «يُشَدّ» باستمرار نحو الصفر بقوة تتناسب مع حجمه. وردة التربيع: الأوزان الكبيرة بتشيل عقاب أكبر بكتير من الصغيرة → توزيع أوزان صغير ومتوازن → تقل حساسية النموذج للتقلبات. قيمة λ (مثل <code>0.01</code> بالمحاضرة) تتحكم بقوة الشد — أكبر λ = تنظيم أقوى = bias أعلى قليلاً.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن L2 تحذف ميزات؛ لا — <b>تصغّر بدون تصفير</b> (هذا شغل L1).</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٦</span>L1 رياضيًا — ليش تصفي (zero) الأوزان حرفيًا؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> L1 بتضيف <code>λ·Σ|W|</code>، ومشتقة القيمة المطلقة <code>±λ</code> (ثابتة بإشارة الوزن). الفرق الحاسم عن L2: <b>المشتقة لا تعتمد على حجم الوزن</b> — يعني وزن صغير حتى لو تدرجاته صغيرة، يُدفع بقوة ثابتة نحو الصفر، ولما يوصله <b>يبقى صفرًا</b>. النتيجة: <b>sparsity</b> — أوزان كثيرة تصير صفر بالكامل = اختيار ميزات تلقائي + نموذج أخف وأسهل تفسير.</p>
+        <p class="trap"><b>فخ شائع:</b> تحسبه نفس L1 مع L2 — الفرق: <b>sparsity (L1) مقابل انكماش سلس غير صفري (L2)</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٧</span>Dropout كنظام — ليش إطفاء الخلايا بيمنع الحفظ؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> كل خطوة تدريب بـ Dropout = <b>شبكة مختلفة جزئيًا</b> (خلايا مختلفة مطفأة)؛ وبعد آلاف الخطوات يصير عندك عدد هائل من الشبكات الصغيرة وكلها تتعلم مع بعض — رياضيًا هذا <b>ensemble/bagging ضمني</b> يديك تعميم أقوى. عمليًا: خلية واحدة ما بتقدر تتكل على جيرانها (ممكن ينطفوا) → كل خلية تتعلم ميزة حقيقية مستقلة → تعميم أقوى.</p>
+        <p class="trap"><b>فخ شائع:</b> تحسبه «عشوائية تخرّب التدريب» — العكس؛ هو averaging ذكي لشبكات صغيرة.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٨</span>BatchNorm ونظرية الـ Covariate Shift — باسم الله نبدأ؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> أثناء التدريب، كل طبقة «تلاحق» توزيعًا متغيرًا باستمرار لأن الطبقات قبلها بتتغير — هذا اسمه <b>internal covariate shift</b>. BatchNorm تعيد توحيد كل batch (متوسط ≈ 0، انحراف ≈ 1) بمعاملات قابلة للتعلم (<code>γ, β</code>) بعدها. النتيجة: التوزيع ما يتهرب، <b>التدرجات أكثر سلاسة</b>، والتدريب أسرع ومستقر، ويتحمل learning rate أعلى — كأنه فرملة ومثبت سرعة لكل طبقة.</p>
+        <p class="trap"><b>فخ شائع:</b> تحسبه مجرد «Normalization للمدخلات»؛ هي على <b>مخرجات الطبقات الداخلية</b> أثناء التدريب.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن١٩</span>EarlyStopping و Cross-Validation — وين التقاطع النظري؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> منحنى <code>val_loss</code> غالبًا على شكل <b>U</b>: أول التدريب ينزل مع <code>train_loss</code>، ثم يتوقف ويبدأ بالصعود بينما <code>train_loss</code> يكمل هبوط — تلك القمة هي <b>أفضل تعميم</b>. EarlyStopping = كشفها آليًا (<code>patience</code> + <code>restore_best_weights</code>). و<b>Cross-Validation</b> (k-fold): نقسم التدريب لـ k طيّات ونكرر k مرة، كل مرة طيّة مختلفة تلعب دور التيست → تقدير <b>أقل تحيّزًا</b> لقدرة النموذج على التعميم — وهون GridSearchCV مبني كله (كل تركيبة C/gamma تُقيّمها CV).</p>
+        <p class="trap"><b>فخ شائع:</b> تظن «تدريب أكثر = أحسن دايمًا» — فوق قمة الـ U = overfitting مؤكد.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <p class="theory-part">د · SVM — النظرية من معادلة الحد للـ kernel</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٢٠</span>من وين جاية معادلة SVM؟ شو معنى argmax/½‖w‖²؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> الحد الفاصل خط: <code>f(x) = wᵀx + b = 0</code>. نطلب إن كل نقطة تكون «بالجهة الصح وبأمان»: <code>yᵢ(wᵀxᵢ + b) ≥ 1</code> (مع yᵢ = ±1). عرض الهامش بين الصفّين = <code>2/‖w‖</code>. عشان نكبّر الهامش نعمل العكس رياضيًا: <b>نصغّر ½‖w‖²</b> مع ذلك القيد. إذن SVM = برنامج تربيعي (quadratic program) — وما فيه تعلم عشوائي، فيه <b>حل أمثل محفوظ رياضيًا</b>.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن المعادلة «تصنيف عادي»؛ هي قيد هندسي: أكبر مساحة أمان ممكنة.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٢١</span>ليش «أكبر هامش» = أفضل تعميم؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> هامش رحب يعني إن <b>النقاط الجديدة القريبة من الحد أقل عرضة للانقلاب</b> بسبب ضجيج بسيط في القياس. نظريًا: تصغير ‖w‖ = أقل تعقيد للدالة → ضمن مبدأ <b>Structural Risk Minimization</b> (SRM) بيقل التباين الإحصائي للحل — يعني ثقة أعلى ببيانات ما شافها النموذج. هذا سبب تفوق SVM مع بيانات قليلة وميزات كثيرة.</p>
+        <p class="trap"><b>فخ شائع:</b> تحسبه «شكل أجمل»؛ الصح: <b>حدود ثقة نظرية على الخطأ</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٢٢</span>شو يعني Support Vectors وليه الحل بيعتمد عليها فقط؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> بعد الحل (بالصيغة المزدوجة dual)، تبين إن معاملات Lagrange لـ <b>النقاط البعيدة عن الهامش = 0</b> — يعني ما تدخل بالحل أبدًا. النقاط الوحيدة اللي تحقق المساواة <code>yᵢ(wᵀxᵢ+b) = 1</code> هي اللي لها معامل ≠ 0 — هنّ الـ <b>Support Vectors</b>. لهذا: حذف أي نقطة تانية ما بيغيّر الحد نهائيًا، وعددها القليل = نموذج أرخص بالذاكرة والحساب عند التنبؤ.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن support vectors هي «outliers»؛ لا — هي <b>الأقرب للحد وهذا بالضبط سبب أهميتها</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٢٣</span>Hard margin مقابل Soft margin — شو المتغير ξ؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <b>Hard margin:</b> القيد <code>yᵢ(wᵀxᵢ+b) ≥ 1</code> حرفي بلا استثناءات — يعمل فقط إذا البيانات قابلة للفصل خطيًا، ونقطة واحدة غلط تُعجز الحل كله. <b>Soft margin:</b> نسمح بمخالفات <code>ξᵢ ≥ 0</code>: <code>yᵢ(wᵀxᵢ+b) ≥ 1 − ξᵢ</code> ونعاقب مجموعها في الهدف بـ <code>C·Σξᵢ</code>. <code>ξ</code> = مقدار <b>اختراق الهامش</b> (قد يكون حتى بدون خطأ تصنيف). <b>C صغير ↔ تساهل مع المخالفات وهامش أرحب؛ C كبير ↔ عقوبة صارمة على أي مخالفة وهامش أضيق</b> — والبيانات الحقيقية دائمًا soft.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن ξ «عدد الأخطاء»؛ هي <b>مقدار الاختراق</b> — مستمرة، مو صحيحة.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٢٤</span>اشرح الـ Kernel Trick — كيف SVM «يدخل» فضاء لا نهائي بدون حسابه؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> البيانات أحيانًا ما بتنفصل بخط مستقيم بالمساحي الأصلي. نظريًا: ارفعها لفضاء أعلى الأبعاد (مثلاً كل x يروح إلى [x, x², x·y, ...]) فيصير فيها فصل خطي هناك. <b>Kernel trick</b>: SVM بالمزدوج ما يحتاج إلا <b>جداءات داخلية</b> ⟨φ(x),φ(y)⟩، فنعرّف <b>دالة kernel</b> تحسب هالجداء مباشرة <b>بدون بناء φ أبدًا</b>. Linear: <code>K=xᵀy</code> · RBF: <code>K=exp(−γ‖x−y‖²)</code> (دوال غاوسية مرنة بلا نهاية بالأبعاد). <b>γ</b> = عرض الدالة الغاوسية: كبير = دوال ضيقة جدًا حول كل نقطة (تعقيد واحتمال overfit)؛ صغير = دوال عريضة ناعمة (حدود بسيطة).</p>
+        <p class="trap"><b>فخ شائع:</b> تظن kernel «ينقل البيانات فعلاً» — لا؛ هو <b>محاكاة الجداء الداخلي فقط</b>، وهذا هو السحر.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ن٢٥</span>SVR نظرياً — ليش «أنبوب» بدل «حد فاصل»؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> في الانحدار ما فيه أصناف — الحل: نبني <b>أنبوبًا</b> نصف قطره <code>ε</code> حول منحنى التنبؤ بدل خط فاصل. <b>ε-insensitive loss</b>: أي خطأ داخل الأنبوب ثمنه <b>صفر</b> (التسامح مقصود)، وخارجه يُعاقب بمقدار <code>|y − f(x)| − ε</code>. الهدف: أوسع عدد نقاط داخل الأنبوب بأضيق أنبوب ممكن، والحل بيعتمد فقط على النقاط «على حافة الأنبوب» (support vectors للانحدار) — نفس روح SVM بس بأنبوب.</p>
+        <p class="trap"><b>فخ شائع:</b> تظن epsilon «برامتر عشوائي» — هي <b>نصف عرض الأنبوب</b> وتحدد التسامح بدقة.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <div class="table-wrap gloss" role="region" aria-label="قاموس المصطلحات">
+      <table>
+        <thead><tr><th>المصطلح</th><th>المعنى بجملة وحدة</th></tr></thead>
+        <tbody>
+          <tr><td>Loss /Cost</td><td>رقم يلخص قديش تنبؤاتنا غلط</td></tr>
+          <tr><td>Gradient</td><td>اتجاه أقوى صعود للخسارة (نمشي عكسه)</td></tr>
+          <tr><td>Epoch</td><td>مرور كامل واحد على بيانات التدريب</td></tr>
+          <tr><td>Mini-batch</td><td>دفعة صغيرة من العينات قبل كل تحديث</td></tr>
+          <tr><td>Learning rate (lr)</td><td>طول خطوة التحديث الواحد</td></tr>
+          <tr><td>Backpropagation</td><td>حساب المشتقات للخلف بقاعدة السلسلة</td></tr>
+          <tr><td>Overfitting</td><td>حفظ بيانات التدريب والفشل على الجديد</td></tr>
+          <tr><td>Underfitting</td><td>موديل بسيط ما بيقدر يلتقط النمط</td></tr>
+          <tr><td>Regularization</td><td>أي أسلوب يعاقب التعقيد لمنع الحفظ</td></tr>
+          <tr><td>Margin</td><td>عرض «منطقة الأمان» حول الحد الفاصل</td></tr>
+          <tr><td>Support vector</td><td>نقطة على الهامش تمسك الحد (وحدها بالحل)</td></tr>
+          <tr><td>Kernel</td><td>دالة تحسب جداءً داخلي بفضاء ضمني</td></tr>
+          <tr><td>Validation set</td><td>بيانات للمراقبة ما بتدخل بالتدريب</td></tr>
+          <tr><td>Cross-validation</td><td>تكرار التدريب/التقييم على طيّات k</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <!-- ══════════ OPTIMIZATION ══════════ -->
 <section class="topic" id="optimization">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠١</div>
+      <div class="section-num">٠٢</div>
       <div><p class="kicker">SGD · Momentum · AdaGrad · RMSprop · Adam</p><h2>Optimization — «كيف الأوزان بتتعلّم؟»</h2></div>
     </div>
     <p class="topic-intro">الـ Optimization هو طريقة تصحيح الأوزان بعد ما حسبنا المشتقات. افتح كل سؤال — الجواب هو اللي بتحكيه بصوتك بالامتحان:</p>
@@ -318,7 +606,7 @@ td code{white-space:nowrap}
 <section class="topic" id="regularization">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٢</div>
+      <div class="section-num">٠٣</div>
       <div><p class="kicker">L1 · L2 · Dropout · BatchNorm · EarlyStopping</p><h2>Regularization — «منع الحفظ الأعمى»</h2></div>
     </div>
     <p class="topic-intro">Regularization هو أي تقنية تمنع الموديل من حفظ بيانات التدريب حرفيًا بدل ما يتعلّم النمط العام. ركّز على «المشكلة اللي كل واحدة بتحلها»:</p>
@@ -396,7 +684,7 @@ td code{white-space:nowrap}
 <section class="topic" id="svm">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٣</div>
+      <div class="section-num">٠٤</div>
       <div><p class="kicker">SVM · SVR · SVC · kernel · C · gamma · epsilon</p><h2>SVM — «الحد اللي يفصل بأكبر هامش»</h2></div>
     </div>
     <p class="topic-intro">SVM بتختار الحد اللي يبعد أكبر مسافة ممكنة عن أقرب نقاط من الصفين. هاي النقاط القريبة اسمها <b>Support Vectors</b> وهي اللي «تمسك» الحد — وحذف أي نقطة تانية ما بيغيّر شي.</p>
@@ -493,7 +781,7 @@ td code{white-space:nowrap}
 <section class="topic" id="code-qa">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٤</div>
+      <div class="section-num">٠٥</div>
       <div><p class="kicker">سطر سطر للفهم — بدون تأليف كود</p><h2>«اشرح هالكود» — الأسئلة المرجّحة</h2></div>
     </div>
     <p class="topic-intro">لو الامتحان عطاك قطعة كود وطلب شرحها، هاي هي الشروحات اللي بدك تحكيها — كلمة بكلمة:</p>
@@ -531,8 +819,8 @@ if hasattr(optimizer, "post_update_params"):
 <section class="topic" id="quiz">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٥</div>
-      <div><p class="kicker">٢٠ سؤال اختياري مع شرح</p><h2>حل الكويز واكتشف جاهزيتك</h2></div>
+      <div class="section-num">٠٦</div>
+      <div><p class="kicker">٢٦ سؤال اختياري مع شرح</p><h2>حل الكويز واكتشف جاهزيتك</h2></div>
     </div>
     <div class="quiz-top">
       <div><b>اختار جواب لكل سؤال ثم اضغط «صحّح»</b><p>النتيجة بتطلع فورًا ومعها شرح كل سؤال. الأسئلة مبنية على نمط «اشرح / مين بيعمل X؟».</p></div>
@@ -547,7 +835,7 @@ if hasattr(optimizer, "post_update_params"):
 <section class="topic" id="checklist">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٦</div>
+      <div class="section-num">٠٧</div>
       <div><p class="kicker">Checklist محفوظة بالمتصفح</p><h2>جاهزيتك قبل تسليم الشرح</h2></div>
     </div>
     <div class="check-head">
@@ -562,7 +850,7 @@ if hasattr(optimizer, "post_update_params"):
 <section class="topic" id="sources">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٧</div>
+      <div class="section-num">٠٨</div>
       <div><p class="kicker">Original .py files</p><h2>المصادر — أكواد المحاضرات الأصلية</h2></div>
     </div>
     <div class="golden"><b>المصدر:</b> أكواد الـ ZIP المرفقة بالريبو. نسخها الأصلية موجودة تحت <code>study/sources/</code> بالفرع الحالي، وكل رابط بيفتح الملف الأصلي مباشرة. والقوالب الجاهزة بملف <a href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/exam_templates.py" target="_blank" rel="noopener"><code>exam_templates.py</code></a>.</div>
@@ -603,7 +891,13 @@ const QUIZ = [
   {q:"جملة صحيحة عن الـ Support Vectors: …", options:["كل نقاط التدريب تحدد الحد","النقاط الأبعد عن الحد تحدده","النقاط الأقرب للحد (على الهامش) وهي الوحيدة المسؤولة عن تحديده","الـ support vectors هي الـ outliers فقط"], answer:2, why:"حذف أي نقطة غيرها ما بيغيّر الحد."},
   {q:"لو البيانات بتتنفصل بخط مستقيم، أنسب kernel؟", options:["rbf","poly","linear","sigmoid"], answer:2, why:"linear أبسط وأسرع كفاية؛ rbf ما رح يفيد لو الأصل خطي."},
   {q:"restore_best_weights=True في EarlyStopping تعني…", options:["حفظ آخر epoch دائمًا","الرجوع لأوزان أفضل epoch (أقل val_loss) عند التوقف","حذف الأوزان السيئة من الكاش","إعادة التدريب من الصفر"], answer:1, why:"بدونها رح تطلع عندك أوزان آخر epoch مو أفضل واحد."},
-  {q:"LR decay بيعمل…", options:["تكبير الـ learning rate مع الزمن للتسريع","تصغير الـ learning rate مع الزمن لخطوات أدق قرب الحل","تصفير الـ gradients","زيادة الـ batch size"], answer:1, why:"lr_t = lr₀ / (1 + decay·iterations) — بداية سريعة ونهاية دقيقة."}
+  {q:"LR decay بيعمل…", options:["تكبير الـ learning rate مع الزمن للتسريع","تصغير الـ learning rate مع الزمن لخطوات أدق قرب الحل","تصفير الـ gradients","زيادة الـ batch size"], answer:1, why:"lr_t = lr₀ / (1 + decay·iterations) — بداية سريعة ونهاية دقيقة."},
+  {q:"(نظري) دالة الخسارة المناسبة لمسألة انحدار (y رقم مستمر) هي…", options:["Cross-Entropy","Binary Cross-Entropy","Mean Squared Error","Hinge Loss"], answer:2, why:"MSE = متوسط مربع الفروقات؛ للتصنيف نستعمل Cross-Entropy."},
+  {q:"(نظري) الـ backpropagation بيقوم أي مبدأ رياضي؟", options:["قاعدة السلسلة (Chain Rule)","نظرية بايز","قانون الأعداد الكبيرة","تحليل فورييه"], answer:0, why:"كل dW/db بالتدريب Backprop تطبيقات متتابعة لقاعدة السلسلة على الشبكة."},
+  {q:"(نظري) الـ Bias–Variance Tradeoff: الـ overfitting يعني…", options:["Bias عالي و Variance منخفض","Variance عالي و Bias منخفض","Bias عالي و Variance عالي","لا علاقة بين الاثنين"], answer:1, why:"النموذج حساس لتفاصيل التدريب: ممتاز على الترين وسيئ على البيانات الجديدة."},
+  {q:"(نظري) من الناحية الرياضية، L2 تضيف للخسارة…", options:["λ·Σ|W|","λ·ΣW²","λ·max|W|","λ·ΣW"], answer:1, why:"عقوبة التربيع تشد كل الأوزان نحو الصفر بقوة تتناسب مع حجمها — بدون تصفير."},
+  {q:"(نظري) الـ Kernel Trick في SVM يسمح بـ…", options:["نقل البيانات صراحة إلى فضاء لا نهائي (مكلف جدًا)","حساب جداءات داخلية في فضاء ضمني بدون بناء الصورة صراحة","حذف النقاط البعيدة من التدريب","تدريب الشبكة العصبية بدون تدرجات"], answer:1, why:"K(x,y) = ⟨φ(x),φ(y)⟩ — نحسب الجداء مباشرة بدون φ؛ لهذا RBF ممكن بالأبعاد اللامتناهية."},
+  {q:"(نظري) في Soft-margin SVM، المتغير ξ (xi) يمثّل…", options:["عرض الهامش نفسه","مقدار اختراق النقطة للهامش","عدد الـ support vectors","قيمة دالة الـ kernel"], answer:1, why:"القيد yᵢ(wᵀxᵢ+b) ≥ 1 − ξᵢ؛ و C تعاقب مجموع ξᵢ."}
 ];
 
 const CHECKLIST = [
@@ -620,7 +914,11 @@ const CHECKLIST = [
   "بقدر أفرّق SVC (فئوي) و SVR (رقمي مستمر) وليه.",
   "بقدر أحكي تأثير C و gamma و epsilon بدون تردد.",
   "بقدر أشرح ليش StandardScaler + الفرق fit_transform / transform.",
-  "بقدر أشرح GridSearchCV وين best_params_ و best_score_."
+  "بقدر أشرح GridSearchCV وين best_params_ و best_score_.",
+  "بقدر أشرح شنو الـ loss وشنو المشتقة وليه gradient descent.",
+  "بقدر أشرح الفرق epoch / batch / iteration و forward / backward.",
+  "بقدر أشرح Bias vs Variance وعلاقة الـ regularization فيهما.",
+  "بقدر أشرح الـ margin و الـ support vectors و الـ kernel trick."
 ];
 
 const SOURCES = [
@@ -719,6 +1017,15 @@ document.addEventListener('click', async (e) => {
   const old = btn.textContent; btn.textContent = 'تم النسخ ✓';
   setTimeout(() => { btn.textContent = old; }, 1400);
 });
+
+/* ───────── افتح/اطوي كل شروحات قسم النظرية ───────── */
+const openAllBtn = document.getElementById('qa-open-all');
+const closeAllBtn = document.getElementById('qa-close-all');
+if(openAllBtn && closeAllBtn){
+  const theoryDetails = document.querySelectorAll('#theory details.qa');
+  openAllBtn.addEventListener('click', () => theoryDetails.forEach(d => d.open = true));
+  closeAllBtn.addEventListener('click', () => theoryDetails.forEach(d => d.open = false));
+}
 
 /* ───────── الثيم + الطباعة + العودة للأعلى + شريط التقدم ───────── */
 const themeBtn = document.getElementById('theme-btn');
