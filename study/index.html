@@ -194,6 +194,7 @@ td code{white-space:nowrap}
     <nav class="tabs" aria-label="التنقل">
       <a href="#home" data-nav="home" class="active">الرئيسية</a>
       <a href="#how" data-nav="how">كيف تجاوب</a>
+      <a href="#code-exam" data-nav="code-exam">كود الامتحان</a>
       <a href="#theory" data-nav="theory">النظرية من الصفر</a>
       <a href="#optimization" data-nav="optimization">Optimization</a>
       <a href="#regularization" data-nav="regularization">Regularization</a>
@@ -222,9 +223,9 @@ td code{white-space:nowrap}
     </div>
     <div class="stat-row" aria-hidden="true">
       <span class="stat"><b>٣</b> مواضيع</span>
-      <span class="stat"><b>٤٥</b> سؤال اشرح مع جواب</span>
+      <span class="stat"><b>٦٧</b> سؤال اشرح مع جواب</span>
       <span class="stat"><b>٢٦</b> سؤال اختياري</span>
-      <span class="stat"><b>٤</b> «اشرح هالكود»</span>
+      <span class="stat"><b>٤٠</b> «اشرح الكود»</span>
     </div>
   </div>
 </section>
@@ -246,11 +247,337 @@ td code{white-space:nowrap}
   </div>
 </section>
 
+<!-- ══════════ كود الامتحان ══════════ -->
+<section class="topic" id="code-exam">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-num">٠١</div>
+      <div><p class="kicker">النمط الأكيد للامتحان</p><h2>كود الامتحان — اقرأ هالكود وقولي شو بيعمل</h2></div>
+    </div>
+    <p class="topic-intro">شكل الامتحان: بيورجيك قطعة كود من ملفات المحاضرة وبيطلبك تكتب <b>شو وظيفتها وكيف تشتغل</b>. هاي الأربعين بطاقة — كلها أسطر حقيقية من ملفات <code>study/sources/</code> الأصلية. اقراهم وعدّين الكود كأنه امتحان: <b>«شو بيعمل؟ ليش هون؟»</b></p>
+    <div class="theory-tools noprint">
+      <button type="button" class="btn" id="cx-open-all">افتح كل الشروحات</button>
+      <button type="button" class="btn" id="cx-close-all">اطوي الكل</button>
+    </div>
+
+    <p class="theory-part">أ · «شو بيعمل هالملف كامل؟» — ١٢ بطاقة، وحدة لكل ملف محاضرة</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك١</span><code>Optimization_SGD.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> يبنّي ويدرّب شبكة عصبية بسيطة على بيانات حلزونية (<code>spiral_data</code> من مكتبة <code>nnfs</code>) باستعمال <b>أبسط Optimizer ممكن: التدرج العادي</b> — <code>W += −lr·dW</code> بدون momentum وبدون cache. الهدف: تشوف الخوارزمية الأساسية اللي كل باقي الـ optimizers بتجي بعدها. <b>السطر المعرّف:</b> <code>weight_updates = -self.learning_rate * layer.dweights</code>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٢</span><code>Optimization_SGD_Momentum.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> نفس حلقة التدريب بس مع <b>Optimizer_SGD بخصائص decay و momentum</b>: <code>weight_momentums = momentum*weight_momentums - current_lr*dW</code> ثم <code>W += weight_momentums</code>. الهدف: نشوف أثر <b>القصور الذاتي + تناقص الـ learning rate</b> (<code>lr_t = lr₀/(1+decay·iterations)</code>) على سرعة التقارب واستقرار الـ loss مقابل SGD العادي.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣</span><code>Optimization_AdaGrad.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> يبنّي <code>Optimizer_Adagrad</code> الذي <b>يجمع مربّعات التدرجات لكل وزن على حدة</b> (<code>cache += dW**2</code>) — فتتصغر خطواته كلما كبر تدرجاته التاريخية. الهدف التعليمي: عرض <b>التعلم التكيفي</b> ومشكلة <b>«تجميد» الـ lr</b> مع طول التدريب — هذا اللي هيتسأل عنه غالبًا.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٤</span><code>Optimization_RMSprop.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> يبنّي <code>Optimizer_RMSprop</code> — نفس تكييف AdaGrad لكل وزن لكن بـ <b>متوسط أُسّي متناسي</b> بدل الجمع المطلق (<code>cache = rho*cache + (1-rho)*dW**2</code> مع <code>rho=0.999</code>). الهدف: التغلب على تجميد AdaGrad — الـ lr ما بيموت لأنه بينسى التدرجات القديمة تدريجيًا.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٥</span><code>Optimization_Adam.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> أكتمل ملف بالمحاضرة — يبنّي <b>Optimizer_Adam</b> = Momentum + RMSprop + bias correction: لحظات <code>m</code> و <code>v</code>، كل واحدة بتصحيح <code>1 − βᵗ</code>، ثم <code>W += −lr·m̂/(√v̂ + ε)</code>. مع pre_update_params (الـ decay) و post_update_params (<code>iterations += 1</code>). الهدف: أشهر optimizer عملي — والملف بيضم كمان Layer_Dense و ReLU و Softmax و Spiral dataset.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٦</span><code>Regularization_EarlyStopping.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> TensorFlow/Keras على <b>MNIST</b>: شبكة Sequential (Flatten → Dense(128, relu) → Dense(10, softmax)) وتدريبها مع <code>EarlyStopping(monitor="val_loss", patience=3, restore_best_weights=True)</code> و <code>validation_split=0.2</code>. بعد التدريب: <code>model.evaluate</code> على التيست + رسم منحنيي train/val loss — الهدف: يشوف <b>وين وقف</b> وليه.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٧</span><code>Regularization_Dropout.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> PyTorch — تقارن شبكتي <b>CNN على MNIST</b>: <code>CNN_NoDropout</code> ضد <code>CNN_WithDropout(p=0.5)</code> — الفرق الوحيد وجود <code>nn.Dropout(p=0.5)</code> قبل طبقات الـ fully connected. بتتدرب الاثنتين بنفس الـ optimizer (<code>SGD(lr=0.01, momentum=0.9)</code>) وبيطبع دقة التدريب مقابل الـ validation لإثبات أن Dropout يعمّم أفضل. <b>النقاط المعرفية:</b> <code>model.train()</code> للتدريب، <code>model.eval()</code> + <code>torch.no_grad()</code> للتقييم.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٨</span><code>Regularization_BatchNorm.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> TensorFlow/Keras — على <b>5000 عينة فقط من MNIST</b> (لأجل السرعة): <code>Input(784) → Dense(64) → BatchNormalization() → Activation("relu") → Dense(10, softmax)</code>. الهدف: توضيح أن BatchNorm تسرّع التقارب وتثبّت التدريب — لاحظ الترتيب <b>Dense ← BatchNormalization ← Activation</b> بالضبط، لأنه سؤال امتحاني شهير.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٩</span><code>SVM_SVC_BreastCancer.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> معيار sklearn الكلاسيكي: <code>load_breast_cancer()</code>، <b>ميزتان فقط</b> <code>[:, [0, 1]]</code> من أجل الرسم، تقسيم 80/20، scaling، ثم <code>SVC(kernel='rbf', C=100.0, random_state=42)</code> → <code>predict</code> → <code>accuracy_score</code> + <code>classification_report</code>، وبالأخير دالة <code>plot_decision_boundary</code> ترسم مناطق القرار عبر <code>np.meshgrid</code> و <code>plt.contourf</code>. الهدف: صورة كاملة لـ SVC من التحميل للرسم.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك١٠</span><code>SVM_SVC_Pulsar.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> قراءة ملف <b>CSV</b> حقيقي (بيانات نبضات نجمية — pulsar)، تحضيره، وتدريب <b>عدة نماذج SVC بـ kernels مختلفة</b> (<code>linear / poly / rbf / sigmoid</code>) ومقارنتها — لبيان أن اختيار الـ kernel ونوع الـ scaling يقرر الأداء على البيانات الحقيقية المو المصنعة.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك١١</span><code>SVM_SVR.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> بيانات انحدار صناعية: <code>y = sin(X)</code> من 40 نقطة مع ضجيج اصطناعي (كل عنصر خامس)، ثم مقارنة <b>ثلاث SVRs</b>: <code>RBF (C=1, gamma=10, ε=0.1)</code>، <code>Linear (C=100)</code>، <code>Poly (degree=3, coef0=1)</code> — ورسم المنحنيات الثلاثة بجانب بعضها مع <b>تلوين الـ support vectors</b> (<code>X[svr.support_]</code>) بثلاث subplots. الهدف: رؤية أنبوب ε وكيف تختلف الـ kernels على نفس البيانات.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك١٢</span><code>SVM_RBF_Params.py</code> — شو بيعمل؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <b>GridSearchCV على C و gamma</b> بمقياس لوغاريتمي (<code>np.logspace(-2, 10, 13)</code> للـ C و <code>(-9, 3, 13)</code> للـ gamma) مع <code>StratifiedShuffleSplit(n_splits=5)</code> و <code>SVC()</code> — يجرب <b>169 تركيبة</b> ويطبع <code>best_params_</code> و <code>best_score_</code>. بعدين يدرّب نماذج لتركيبات مختارة (<code>C ∈ [0.01, 1, 100]</code>، <code>gamma ∈ [0.1, 1, 10]</code>) على الميزتين الأوليين ويرسم حدود القرار لرؤيتها. ملاحظة الدكتور داخل الملف: <b>«scaling الكل بدل fit على التدريب فقط — غش خفيف لأغراض العرض»</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <p class="theory-part">ب · «اشرح هالسطر / هالقطعة» — ١٨ بطاقة من أكواد المحاضرات حرفيًا</p>
+
+    <div class="code-qa">
+      <pre><code>data = load_breast_cancer()
+X = data.data[:, [0, 1]]
+y = data.target</code></pre>
+      <div class="explain"><span class="tag">تحميل + ميزتان فقط</span><br><b>شو بيعمل؟</b> حمّل بيانات سرطان الثدي من sklearn (569 عينة، 30 ميزة، 2 أصناف: خبيث/حميد)، واختار <b>أول ميزتين فقط</b> (radius و texture مثلًا) — مو لاختصار الدقة، بس <b>لوصف ورسم</b> حد القرار على بعدين (ما بنقدر نرسم 30 بعد).</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)</code></pre>
+      <div class="explain"><span class="tag">التقسيم</span><br><b>شو بيعمل؟</b> قسم البيانات 80% تدريب / 20% اختبار. <code>random_state=42</code> يثبّت العشوائية فبتحصل نفس التقسيم كل تشغيل (قابلية التكرار — ضروري لأي مقارنة عادلة بين kernels).</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)</code></pre>
+      <div class="explain"><span class="tag">Scaling بدون تسريب</span><br><b>ليش fit_transform على الترين وtransform فقط على التيست؟</b> عشان التيست ما يشارك بقرار الـ scaler (المتوسط والانحراف) — <b>data leakage</b> ممنوعة. SVC بيحسب مسافات، فلازم كل الميزات بنفس المقياس.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>svm_classifier = SVC(kernel='rbf', C=100.0, random_state=42)
+svm_classifier.fit(X_train_scaled, y_train)</code></pre>
+      <div class="explain"><span class="tag">إنشاء + تدريب SVC</span><br><b>شو بتعمل كل برامتر؟</b> <code>kernel='rbf'</code> شكل الحد (RBF = غير خطي مرن، والخيارات: linear/poly/sigmoid). <code>C=100.0</code> عقوبة خرق الهامش (كبير = هامش ضيق وملاحقة كل نقطة — انتبه للـ overfitting). <code>random_state</code> يثبت العشوائية الداخلية (shuffle). <code>.fit(...)</code> = خطوة التدريب نفسها: solve التربيعي وإيجاد الـ support vectors.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>y_pred = svm_classifier.predict(X_test_scaled)
+print(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")</code></pre>
+      <div class="explain"><span class="tag">التنبؤ والقياس</span><br><b>شو بيصير هون؟</b> <code>.predict</code> تمرر التيست بالحد الفاصل ويرجع تنبؤات الأصناف. <code>accuracy_score</code> = نسبة التنبؤات الصحيحة — <b>بس انتبه</b>: الـ accuracy وحدها على بيانات غير متوازنة بتخدع؛ عشان هيك المحاضرات بتطبع <code>classification_report</code> كمان.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>print(classification_report(y_test, y_pred,
+      target_names=data.target_names))</code></pre>
+      <div class="explain"><span class="tag">تقرير مفصل</span><br><b>شو فيه التقرير؟</b> لكل صنف: <b>precision</b> (من كل المتنبأ بيهم إيجاب، كم صح؟)، <b>recall</b> (من كل الإيجابيين الحقيقيين، كم التقطنا؟)، <b>F1</b> (متوسطهما التوافقي)، + دقة إجمالية و macro/weighted averages. <code>target_names</code> بيبدّل الأرقام 0/1 بالأسماء (malignant/benign) للقراءة.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                     np.arange(y_min, y_max, h))
+Z = model.predict(scaler.transform(np.c_[xx.ravel(), yy.ravel()]))
+Z = Z.reshape(xx.shape)
+plt.contourf(xx, yy, Z, cmap=plt.cm.coolwarm, alpha=0.3)</code></pre>
+      <div class="explain"><span class="tag">رسم حد القرار</span><br><b>شو الفكرة؟</b> نمد «شبكة» كثيفة من النقاط على المستوى (h=0.02 خطوة)، نتنبأ كل نقطة فيها (لازم تمر على <b>نفس الـ scaler</b> — وهون غلط شائع)، ثم <code>contourf</code> يلوّن كل منطقة بصنفها. <code>np.c_[xx.ravel(), yy.ravel()]</code> دمج إحداثي x مع y لكل نقاط الشبكة؛ <code>reshape</code> يرجعها لمصفوفة الشكل الأصلي للرسم.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>X = np.sort(5 * np.random.rand(40, 1), axis=0)
+y = np.sin(X).ravel()
+y[::5] += 3 * (0.5 - np.random.rand(8))</code></pre>
+      <div class="explain"><span class="tag">بيانات صناعية لسبورة SVR</span><br><b>شو هاي؟</b> 40 نقطة <code>x</code> في المجال [0, 5] <b>مرتبة تصاعديًا</b> (متىترتبة المنحنى يرسم صح)، و<code>y = sin(x)</code>. السطر الثالث: <b>كل عنصر خامس</b> (8 نقاط) ياخد إزاحة عشوائية ±1.5 — ضجيج مقصود عشان نرى متانة الـ SVR. <code>.ravel()</code> تسطّح المصفوفة العمودية لمصفوفة 1D.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>svrs = [svr_rbf, svr_lin, svr_poly]
+for ix, svr in enumerate(svrs):
+    axes[ix].plot(X, svr.fit(X, y).predict(X), lw=2, label=kernel_label[ix])</code></pre>
+      <div class="explain"><span class="tag">مقارنة ثلاث kernels</span><br><b>شو بيعمل؟</b> حلقة واحدة تمر على النماذج الثلاثة: <b>كل واحد يُدرّب ثم يُتنبّأ على نفس X</b> (سلسلة <code>fit → predict</code> مختصرة)، والنتيجة ترسم بثلاث subplots جنب بعض (<code>plt.subplots(1, 3)</code>) مع <code>sharey=True</code> لمقارنة عادلة بنفس المقياس.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>axes[ix].scatter(X[svr.support_], y[svr.support_],
+                 facecolor="none", edgecolor=model_color[ix], s=50)</code></pre>
+      <div class="explain"><span class="tag">الـ Support Vectors بصريًا</span><br><b>شو بيعمل هالسطر؟</b> <code>svr.support_</code> مصفوفة فهارس — فهارس النقاط اللي صارت support vectors. هون الحلقة ترسمهم كدوائر مفرّغة ملونة — <b>هنّ الحاملين الفعليين للأنبوب</b>؛ الباقي (<code>np.setdiff1d</code>) دوائر سوداء عادية. هاي أنسب رسمة لو طلب منك الدكتور «اشرح دور الـ support vectors».</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>C_range = np.logspace(-2, 10, 13)
+gamma_range = np.logspace(-9, 3, 13)
+param_grid = dict(gamma=gamma_range, C=C_range)</code></pre>
+      <div class="explain"><span class="tag">بحث لوغاريتمي</span><br><b>ليش logspace؟</b> <code>np.logspace(-2, 10, 13)</code> = 13 قيمة بأساس 10: 0.01، 0.1، 1، 10، 100 … 10^10. الـ C لهذا المجال الواسع، والمشي بأساس 1 (0.01, 0.02…) كان رح ياخد ملايين التجارب. القاعدة: <b>كلما اختلفت رتبة الحجم، غطيها بأساس 10</b>.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>cv = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
+grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
+grid.fit(X, y)
+print(grid.best_params_, grid.best_score_)</code></pre>
+      <div class="explain"><span class="tag">الـ CV مقسّم الطبقات</span><br><b>ليش StratifiedShuffleSplit مو أي CV؟</b> بيحافظ على <b>نسبة الأصناف</b> بكل طيّة (مهم لو الأصناف غير متوازنة). <code>GridSearchCV</code> يجرب <b>13×13 = 169 تركيبة</b> × 5 طيّات = 845 تدريب. <code>best_params_</code> = أفضل (C, gamma)، <code>best_score_</code> = متوسط الدقة عبر الطيّات.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>x_train = x_train / 255.0
+x_test = x_test / 255.0</code></pre>
+      <div class="explain"><span class="tag">تطبيع البكسلات</span><br><b>شو بيعمل؟</b> يحوّل قيم البكسلات من [0, 255] لـ [0, 1]. التدرجات مع قيم كبيرة = خطوات قفّازة وعدم استقرار — التطبيع يخلي التدريب أسرع وأثبت (نفس منطق StandardScaler مع الميزات المستمرة).</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>early_stopping = EarlyStopping(
+    monitor="val_loss",
+    patience=3,
+    restore_best_weights=True
+)</code></pre>
+      <div class="explain"><span class="tag">وقف مبكر بثلاث سطور</span><br><b>شو كل كلمة؟</b> <code>monitor="val_loss"</code> راقب خسارة الـ <b>validation</b> (20% محجوزة من <code>validation_split</code>). <code>patience=3</code> اسمح له يستنى 3 epochs بدون تحسن قبل ما يتراجع. <code>restore_best_weights=True</code> عند التوقف، <b>ارجع أوزان أفضل epoch</b> (مو الأخير) — هاي الكلمة هي الفرق بين موديل كويس وممتاز.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>history = model.fit(
+    x_train, y_train,
+    epochs=20, batch_size=32,
+    validation_split=0.2,
+    callbacks=[early_stopping],
+    verbose=1
+)</code></pre>
+      <div class="explain"><span class="tag">التدريب مع الـ callback</span><br><b>شو بيعمل كل سطر؟</b> <code>epochs=20</code> الحد الأعلى للمرور؛ <code>batch_size=32</code> عينة لكل خطوة تحديث؛ <code>validation_split=0.2</code> واحجز 20% للمراقبة (بدون أن تتدرب عليهم)؛ <code>callbacks=[early_stopping]</code> نفذ الـ EarlyStopping بعد كل epoch؛ <code>history</code> يخزن كل القيم للرسم بعدين (<code>history.history["val_loss"]</code>).</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>self.dropout = nn.Dropout(p=p)
+# ...
+x = self.dropout(torch.relu(self.fc1(x)))</code></pre>
+      <div class="explain"><span class="tag">Dropout بالكود (PyTorch)</span><br><b>شو بيصير؟</b> <code>nn.Dropout(p=0.5)</code> ينشئ طبقة تطفئ 50% من الخلايا <b>عشوائيًا كل خطوة تدريب</b>. والسطر الثاني: مكان الاستعمال في <code>forward</code> — <b>بعد</b> الطبقة الكاملة وبعد ReLU مباشرة وقبل الطبقة الأخيرة. وقت الـ validation (<code>model.eval()</code>) هالطبقة تنطفئ تلقائيًا — هون سر السؤال الامتحاني الشهير.</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>optimizer.zero_grad()
+loss.backward()
+optimizer.step()</code></pre>
+      <div class="explain"><span class="tag">خطوات التحديث الثلاث</span><br><b>الترتيب المقدس:</b> <code>zero_grad()</code> امسح بقايا التدرجات (وإلا تتراكم من batches سابقة) → <code>loss.backward()</code> احسب التدرجات الجديدة لكل برامتر → <code>step()</code> طبّقها: <code>W += −lr·dW</code> (مع أي momentum/decay بالـ optimizer).</div>
+    </div>
+
+    <div class="code-qa">
+      <pre><code>Dense(64) → BatchNormalization() → Activation("relu") → Dense(10, activation="softmax")</code></pre>
+      <div class="explain"><span class="tag">الترتيب الذهبي للـ BatchNorm</span><br><b>ليش الترتيب بالذات؟</b> Dense يستخرج ميزات ← BatchNorm توحّد توزيعها (متوسط 0 انحراف 1) ← Activation تضيف اللاخطية. لو وضعت BatchNorm بعد الـ Activation عندك إعادة توحيد لـ قيم سالبة/موجبة مختلطة — غلط شائع بتسأل عنه الامتحانات. و<code>softmax</code> بالطبقة الأخيرة هي اللي تحول اللوجيتس لاحتمالات 0–1.</div>
+    </div>
+
+    <p class="theory-part">ج · «شو بيصير لو…؟» — ١٠ أسئلة اللف والدوران</p>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣١</span>شو بيصير لو حذفنا <code>StandardScaler</code> قبل SVC؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> الـ RBF kernel بيحسب <b>مسافات إقليدية</b> بين النقاط — ميزة بمقياس كبير (مثلاً العمر بالسنوات مقابل الطول بالسم) رح تسيطر على حساب المسافة وتسحق كل تأثير لباقي الميزات → حد قرار مشوه، دقة انهيار. SVM من الخوارزميات اللي <b>لازم</b> دادهها موزونة — بعكس أشجار القرار مثلاً.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣٢</span>شو بيصير لو استعملنا <code>fit_transform</code> على التيست؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <b>Data leakage</b> — معلومات من التيست (متوسطه وانحرافه) تسربت للتدريب عبر الـ scaler. الموديل بيشوف بيانات ما المفروض يراها، الأرقام تطلع متفائلة وهميًا، وعلى البيانات الحقيقية الأداء أسوأ. القاعدة الذهبية: <b>fit على التدريب فقط، transform على التيست</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣٣</span>شو بيصير لو رفعنا <code>C</code> من 1 لـ 100؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> العقوبة على الهامش صارت صارمة جدًا — الموديل يحاول يصنف <b>كل</b> عينات التدريب صح بما فيها الضوضاء → <b>هامش أضيق ونمو معرّج عنيف حول النقاط</b> → overfitting. لاحظ أن محاضرة breast cancer جربت <code>C=100</code> عمدًا ليشوف أثرها — هاي نقطة نقاش بالدكتور.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣٤</span>شو بيصير لو اخترنا <code>kernel='linear'</code> على بيانات حلزونية (spiral)؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <b>فشل كامل</b> — خط مستقيم ما بيقدر يفصل أصناف ملتفة حول بعضها في المستوى الأصلي. الـ linear kernel تحلها فقط إذا البيانات مفصولة خطيًا فعلًا (أو تقريباً). عشان هيك spiral_data بالمحاضرات دايماً بتتدرب بـ <code>rbf</code>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣٥</span>شو بيصير لو نسينا <code>model.eval()</code> قبل التقييم؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> <code>Dropout</code> بضل شغال — يعني عند كل تقييم <b>خلايا عشوائية مطفأة</b> والنتيجة بتطلع أقل دقة وعشوائية (تشغيل لتشغيل). وكمان BatchNorm بضل بحدث إحصاءاته بدل ما يستخدم المثبتة — دقة التقييم تصير هذيان. لهذا كل كود تقييم بالملفات فيه <code>model.eval()</code> (وغالبًا <code>torch.no_grad()</code>).</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣٦</span>شو بيصير لو حطينا <code>restore_best_weights=False</code>؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> عند الـ EarlyStopping، الموديل بتنهي عنده أوزان <b>آخر epoch</b> (كانت val_loss بصعود مستمر لـ 3 epochs) — مش أفضل نسخة وصلت لها. يعني التقييم النهائي بيكون بموديل <b>أسوأ من اللي كان ممكن تاخذه بالرجعة</b> — وهدر مقصود لهذا البرامتر موجود.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣٧</span>شو بيصير لو حذفنا <code>pre_update_params</code> من الاستدعاء؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> الـ <b>learning rate decay</b> ما بينطبق أبدًا — الـ optimizer بضل بلر الثابت من المحاولة الأولى لآخرها. بتوصل لنتيجة بس بخطوات عنيفة الرتيبة وغير متدرجة؛ أقرب للحل لكن بذيل طويل من التذبذبات وما فيه «دشّة أخيرة».</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣٨</span>شو بيصير لو حذفنا <code>post_update_params</code>؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> العداد <code>self.iterations</code> ما بيزيد أبدًا — وفضل <b>صفرًا</b>. وهذا يدمّر استراتيجية Adam كاملة: الـ bias correction بتفضل <code>1 − β₁⁰ = 0</code> (قسمة على صفر بالممارسة/تصحيح وهمي)، والـ decay ما بيتنفذ لأنه يعتمد على iterations — الموديل بتحرك بأول خطوة للأبد.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٣٩</span>شو بيصير لو نسينا <code>optimizer.zero_grad()</code>؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> التدرجات <b>تتراكم عبر الـ batches</b> بدل ما تتصفصف — والخطوة الفعلية تصير مجموع نمو كل التدرجات السابقة؛ قفزات عملاقة غير متوقعة، الخسارة بتتناثر بعشوائية أو تنفجر NaN. لهذا الترتيب المقدس: <b>zero_grad ← backward ← step</b>.</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+    <details class="qa">
+      <summary><span class="qa-q">ك٤٠</span>شو بيصير لو درّبنا <code>SVC</code> على y أرقام مستمرة (انحدار)؟<span class="chev">◀</span></summary>
+      <div class="qa-body">
+        <p class="model-answer"><b>الجواب النموذجي:</b> كل قيمة فريدة بـ y بتصير <b>صنف مستقل</b> — نموذج بمئات الأصناف ولكل عينة جديدة التنبؤ يصير عشوائيًا. SVC للأصناف فقط؛ للأرقام المستمرة <b>SVR</b> (مع أنبوب ε). فقط التبديل هون: <code>from sklearn.svm import SVR</code> وتتغير مقاييس التقييم لـ MSE/R².</p>
+        <div class="copy-line"><button class="copy-btn" type="button">انسخ الجواب</button></div>
+      </div>
+    </details>
+
+  </div>
+</section>
+
 <!-- ══════════ النظرية من الصفر ══════════ -->
 <section class="topic" id="theory">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠١</div>
+      <div class="section-num">٠٢</div>
       <div><p class="kicker">للطلاب اللي غابوا عن المحاضرات</p><h2>النظرية من الصفر — من المشتقة للـ kernel trick</h2></div>
     </div>
     <p class="topic-intro">لو ما حضرت ولا محاضرة، ابدأ من هون. هي نفس المادة اللي المفروض تشرحها المحاضرة، بس مشروحة بترتيب يفهمك <b>ليش</b> — مو بس <b>شو</b>. ما في شرط رياضيات مسبقة إلا إنك تسمع كلمة «مشتقة» وتكمل.</p>
@@ -528,7 +855,7 @@ td code{white-space:nowrap}
 <section class="topic" id="optimization">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٢</div>
+      <div class="section-num">٠٣</div>
       <div><p class="kicker">SGD · Momentum · AdaGrad · RMSprop · Adam</p><h2>Optimization — «كيف الأوزان بتتعلّم؟»</h2></div>
     </div>
     <p class="topic-intro">الـ Optimization هو طريقة تصحيح الأوزان بعد ما حسبنا المشتقات. افتح كل سؤال — الجواب هو اللي بتحكيه بصوتك بالامتحان:</p>
@@ -606,7 +933,7 @@ td code{white-space:nowrap}
 <section class="topic" id="regularization">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٣</div>
+      <div class="section-num">٠٤</div>
       <div><p class="kicker">L1 · L2 · Dropout · BatchNorm · EarlyStopping</p><h2>Regularization — «منع الحفظ الأعمى»</h2></div>
     </div>
     <p class="topic-intro">Regularization هو أي تقنية تمنع الموديل من حفظ بيانات التدريب حرفيًا بدل ما يتعلّم النمط العام. ركّز على «المشكلة اللي كل واحدة بتحلها»:</p>
@@ -684,7 +1011,7 @@ td code{white-space:nowrap}
 <section class="topic" id="svm">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٤</div>
+      <div class="section-num">٠٥</div>
       <div><p class="kicker">SVM · SVR · SVC · kernel · C · gamma · epsilon</p><h2>SVM — «الحد اللي يفصل بأكبر هامش»</h2></div>
     </div>
     <p class="topic-intro">SVM بتختار الحد اللي يبعد أكبر مسافة ممكنة عن أقرب نقاط من الصفين. هاي النقاط القريبة اسمها <b>Support Vectors</b> وهي اللي «تمسك» الحد — وحذف أي نقطة تانية ما بيغيّر شي.</p>
@@ -781,7 +1108,7 @@ td code{white-space:nowrap}
 <section class="topic" id="code-qa">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٥</div>
+      <div class="section-num">٠٦</div>
       <div><p class="kicker">سطر سطر للفهم — بدون تأليف كود</p><h2>«اشرح هالكود» — الأسئلة المرجّحة</h2></div>
     </div>
     <p class="topic-intro">لو الامتحان عطاك قطعة كود وطلب شرحها، هاي هي الشروحات اللي بدك تحكيها — كلمة بكلمة:</p>
@@ -819,7 +1146,7 @@ if hasattr(optimizer, "post_update_params"):
 <section class="topic" id="quiz">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٦</div>
+      <div class="section-num">٠٧</div>
       <div><p class="kicker">٢٦ سؤال اختياري مع شرح</p><h2>حل الكويز واكتشف جاهزيتك</h2></div>
     </div>
     <div class="quiz-top">
@@ -835,7 +1162,7 @@ if hasattr(optimizer, "post_update_params"):
 <section class="topic" id="checklist">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٧</div>
+      <div class="section-num">٠٨</div>
       <div><p class="kicker">Checklist محفوظة بالمتصفح</p><h2>جاهزيتك قبل تسليم الشرح</h2></div>
     </div>
     <div class="check-head">
@@ -850,7 +1177,7 @@ if hasattr(optimizer, "post_update_params"):
 <section class="topic" id="sources">
   <div class="container">
     <div class="section-head">
-      <div class="section-num">٠٨</div>
+      <div class="section-num">٠٩</div>
       <div><p class="kicker">Original .py files</p><h2>المصادر — أكواد المحاضرات الأصلية</h2></div>
     </div>
     <div class="golden"><b>المصدر:</b> أكواد الـ ZIP المرفقة بالريبو. نسخها الأصلية موجودة تحت <code>study/sources/</code> بالفرع الحالي، وكل رابط بيفتح الملف الأصلي مباشرة. والقوالب الجاهزة بملف <a href="https://github.com/Monopoly63/exam-ai/raw/refs/heads/arena/872c0405-exam-ai/study/exam_templates.py" target="_blank" rel="noopener"><code>exam_templates.py</code></a>.</div>
@@ -918,7 +1245,9 @@ const CHECKLIST = [
   "بقدر أشرح شنو الـ loss وشنو المشتقة وليه gradient descent.",
   "بقدر أشرح الفرق epoch / batch / iteration و forward / backward.",
   "بقدر أشرح Bias vs Variance وعلاقة الـ regularization فيهما.",
-  "بقدر أشرح الـ margin و الـ support vectors و الـ kernel trick."
+  "بقدر أشرح الـ margin و الـ support vectors و الـ kernel trick.",
+  "بقدر أحكي شو بيعمل كل ملف من ملفات المحاضرة الـ 12.",
+  "بقدر أشرح سطور SVC / Scaling / Callbacks بدون النظر لأي مصدر."
 ];
 
 const SOURCES = [
@@ -1018,14 +1347,17 @@ document.addEventListener('click', async (e) => {
   setTimeout(() => { btn.textContent = old; }, 1400);
 });
 
-/* ───────── افتح/اطوي كل شروحات قسم النظرية ───────── */
-const openAllBtn = document.getElementById('qa-open-all');
-const closeAllBtn = document.getElementById('qa-close-all');
-if(openAllBtn && closeAllBtn){
-  const theoryDetails = document.querySelectorAll('#theory details.qa');
-  openAllBtn.addEventListener('click', () => theoryDetails.forEach(d => d.open = true));
-  closeAllBtn.addEventListener('click', () => theoryDetails.forEach(d => d.open = false));
-}
+/* ───────── افتح/اطوي كل شروحات قسم النظرية وقسم كود الامتحان ───────── */
+[['qa-open-all','qa-close-all','#theory details.qa'],
+ ['cx-open-all','cx-close-all','#code-exam details.qa']].forEach(([openId, closeId, selector]) => {
+  const openBtn = document.getElementById(openId);
+  const closeBtn = document.getElementById(closeId);
+  if(openBtn && closeBtn){
+    const details = document.querySelectorAll(selector);
+    openBtn.addEventListener('click', () => details.forEach(d => d.open = true));
+    closeBtn.addEventListener('click', () => details.forEach(d => d.open = false));
+  }
+});
 
 /* ───────── الثيم + الطباعة + العودة للأعلى + شريط التقدم ───────── */
 const themeBtn = document.getElementById('theme-btn');
